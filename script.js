@@ -32,10 +32,19 @@ function updateFixedTicket() {
 function updateLightTransition() {
   if (!lightTransition) return 0;
   const rect = lightTransition.getBoundingClientRect();
-  const start = window.innerHeight * 0.92;
+
+  const start = window.innerHeight * 0.94;
   const end = -rect.height * 0.12;
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
+
+  // ROOMへの入口。中盤から縦の光が開き、終盤で消えてROOMだけが残る。
+  const doorOpen = clamp((progress - 0.34) / 0.38, 0, 1);
+  const doorFade = clamp((progress - 0.78) / 0.18, 0, 1);
+
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
+  document.documentElement.style.setProperty('--door-progress', doorOpen.toFixed(3));
+  document.documentElement.style.setProperty('--door-fade', doorFade.toFixed(3));
+
   return progress;
 }
 
@@ -46,7 +55,8 @@ let width = 0;
 let height = 0;
 let animationFrameId = null;
 let globalProgress = 0;
-let roomProgress = 0;
+let roomProgress = { gather: 0, fade: 0, visible: 0 };
+let entranceProgress = 0;
 
 function resizeCanvas() {
   if (!canvas || !ctx) return;
@@ -77,17 +87,34 @@ function createParticles(count = 30) {
 }
 
 function updateRoomProgress() {
-  if (!roomSection) return 0;
+  if (!roomSection) return { gather: 0, fade: 0, visible: 0 };
   const rect = roomSection.getBoundingClientRect();
-  const start = window.innerHeight * 1.0;
-  const end = window.innerHeight * 0.15;
-  return clamp((start - rect.top) / (start - end), 0, 1);
+
+  // ROOMに近づくほど光を集める。
+  // ROOMが表示されたあと、少しだけ残してからはけさせる。
+  const gatherStart = window.innerHeight * 1.18;
+  const gatherEnd = window.innerHeight * 0.52;
+  const fadeStart = -window.innerHeight * 0.14;
+  const fadeEnd = -window.innerHeight * 0.88;
+
+  const gather = clamp((gatherStart - rect.top) / (gatherStart - gatherEnd), 0, 1);
+  const fade = clamp((fadeStart - rect.top) / (fadeStart - fadeEnd), 0, 1);
+
+  return {
+    gather,
+    fade,
+    visible: gather * (1 - fade)
+  };
 }
 
 function updateGlobalProgress() {
   const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const raw = window.scrollY / maxScroll;
-  return clamp((raw - 0.12) / 0.72, 0, 1);
+
+  // Hero直後は1〜2粒だけ、進むほど少しずつ溜まる。
+  if (raw < 0.08) return 0;
+  if (raw < 0.18) return 0.08;
+  return clamp((raw - 0.15) / 0.58, 0.08, 1);
 }
 
 function drawParticles(time) {
@@ -95,15 +122,19 @@ function drawParticles(time) {
   ctx.clearRect(0, 0, width, height);
 
   const strength = globalProgress;
-  const visibleCount = Math.floor(particles.length * strength);
-  const roomPull = roomProgress;
-  const centerX = width * 0.52;
-  const centerY = height * 0.58;
+  const roomPull = roomProgress.gather;
+  const fadeOut = roomProgress.fade;
+  const entrancePull = clamp((entranceProgress - 0.22) / 0.55, 0, 1) * (1 - clamp((entranceProgress - 0.82) / 0.16, 0, 1));
+  const particlePresence = clamp(strength * (1 - fadeOut), 0, 1);
+  const earlyMinimum = particlePresence > 0.03 ? 2 : 0;
+  const visibleCount = Math.max(earlyMinimum, Math.floor(particles.length * particlePresence));
+  const centerX = width * 0.50;
+  const centerY = height * 0.52;
 
   // subtle accumulated glow
-  if (strength > 0.02) {
+  if (particlePresence > 0.02) {
     const glow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.min(width, height) * 0.42);
-    glow.addColorStop(0, `rgba(235,235,235,${0.02 + roomPull * 0.08})`);
+    glow.addColorStop(0, `rgba(235,235,235,${(0.018 + roomPull * 0.055 + entrancePull * 0.08) * (1 - fadeOut)})`);
     glow.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, width, height);
@@ -116,9 +147,20 @@ function drawParticles(time) {
     p.y -= p.speedY * driftBoost;
     p.x += p.speedX * (0.3 + strength) + Math.sin(p.phase) * 0.00024;
 
-    if (roomPull > 0.01) {
-      p.x += ((centerX / width) - p.x) * (0.0007 + roomPull * 0.0025);
-      p.y += ((centerY / height) - p.y) * (0.0005 + roomPull * 0.0018);
+    if (entrancePull > 0.01) {
+      p.x += ((centerX / width) - p.x) * (0.0012 + entrancePull * 0.0042);
+      p.y += ((centerY / height) - p.y) * (0.0010 + entrancePull * 0.0032);
+    } else if (roomPull > 0.01) {
+      p.x += ((centerX / width) - p.x) * (0.0007 + roomPull * 0.0023);
+      p.y += ((centerY / height) - p.y) * (0.0005 + roomPull * 0.0017);
+    }
+
+    // ROOM到達後は粒が外へはける。
+    if (fadeOut > 0.02) {
+      const awayX = p.x - (centerX / width);
+      const awayY = p.y - (centerY / height);
+      p.x += awayX * 0.0035 * fadeOut;
+      p.y += awayY * 0.0035 * fadeOut;
     }
 
     if (p.y < -0.08 || p.x < -0.1 || p.x > 1.1) {
@@ -131,8 +173,8 @@ function drawParticles(time) {
     const x = p.x * width;
     const y = p.y * height;
     const twinkle = 0.45 + 0.55 * Math.sin(time * 0.0012 + p.twinkle);
-    const alpha = (0.03 + strength * 0.32 + roomPull * 0.22) * twinkle;
-    const radius = p.size + roomPull * 0.9;
+    const alpha = (0.025 + particlePresence * 0.32 + roomPull * 0.18 + entrancePull * 0.28) * twinkle * Math.pow(1 - fadeOut, 1.35);
+    const radius = p.size + roomPull * 0.65 + entrancePull * 1.25;
 
     ctx.beginPath();
     ctx.fillStyle = `rgba(235, 239, 255, ${alpha})`;
@@ -148,7 +190,7 @@ function drawParticles(time) {
 
 function update() {
   updateFixedTicket();
-  updateLightTransition();
+  entranceProgress = updateLightTransition();
   globalProgress = updateGlobalProgress();
   roomProgress = updateRoomProgress();
 }
@@ -157,6 +199,6 @@ window.addEventListener('scroll', update, { passive: true });
 window.addEventListener('resize', () => { resizeCanvas(); update(); });
 
 resizeCanvas();
-createParticles(34);
+createParticles(42);
 update();
 if (ctx) animationFrameId = window.requestAnimationFrame(drawParticles);
