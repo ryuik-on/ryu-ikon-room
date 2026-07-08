@@ -1,20 +1,14 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 :root {
   --bg: #000000;
-  --text: #E8E8E8;
-  --muted: #A6A6A6;
-  --body: #E0E0E0;
-  --soft: #CFCFCF;
+  --text: #ECECEC;
+  --muted: #ABABAB;
+  --body: #E6E6E6;
   --light-progress: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background: var(--bg);
@@ -23,15 +17,19 @@ body {
   font-weight: 300;
   overflow-x: hidden;
 }
+img { display:block; max-width:100%; }
+a { color: inherit; }
 
-img {
-  display: block;
-  max-width: 100%;
+.particle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
 }
 
-a {
-  color: inherit;
-}
+.site-main, .fixed-ticket { position: relative; z-index: 2; }
 
 .fixed-ticket {
   position: fixed;
@@ -47,30 +45,16 @@ a {
   transform: translateY(-4px);
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
-
-.fixed-ticket.is-visible {
-  opacity: 0.82;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.fixed-ticket:hover {
-  opacity: 1;
-}
+.fixed-ticket.is-visible { opacity: 0.82; pointer-events: auto; transform: translateY(0); }
+.fixed-ticket:hover { opacity: 1; }
 
 .hero {
   position: relative;
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: #000;
 }
-
-.hero-inner {
-  text-align: center;
-  transform: translateY(-2px);
-}
-
+.hero-inner { text-align:center; transform: translateY(-2px); }
 .hero-logo {
   width: min(370px, 70vw);
   margin-inline: auto;
@@ -79,7 +63,6 @@ a {
   filter: brightness(1.08) contrast(1.08) drop-shadow(0 16px 36px rgba(0,0,0,.78));
   animation: heroLogoIn 1.8s ease 0.9s forwards;
 }
-
 .hero-tagline {
   margin: 0.82rem 0 0;
   color: var(--muted);
@@ -89,66 +72,36 @@ a {
   transform: translateY(6px);
   animation: heroTextIn 1.2s ease 2.55s forwards;
 }
-
 .scroll-line {
   position: absolute;
   left: 50%;
   bottom: 38px;
   width: 1px;
   height: 28px;
-  background: #666666;
+  background: #666;
   opacity: 0;
   animation: scrollLineFade 2.4s ease-in-out 3.65s infinite;
 }
+@keyframes heroLogoIn { to { opacity: 1; transform: scale(1); } }
+@keyframes heroTextIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes scrollLineFade { 0%,100%{opacity:.18;} 50%{opacity:.72;} }
 
-@keyframes heroLogoIn {
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes heroTextIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scrollLineFade {
-  0%, 100% { opacity: 0.18; }
-  50% { opacity: 0.72; }
-}
-
-.black-gap {
-  background: #000;
-}
-
-.black-gap-hero {
-  height: 52vh;
-}
-
-.black-gap-question {
-  height: 20vh;
-}
-
-.black-gap-statement {
-  height: 34vh;
-}
-
-.black-gap-visual {
-  height: 42vh;
-}
+.black-gap { background: transparent; }
+.black-gap-hero { height: 52vh; }
+.black-gap-question { height: 20vh; }
+.black-gap-statement { height: 34vh; }
+.black-gap-visual { height: 42vh; }
 
 .reveal {
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 0.95s ease-out, transform 0.95s ease-out;
 }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
 
-.reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+.question, .statement, .fragment, .room-section, .ticket-section, .footer,
+.founders-note, .visual, .light-transition {
+  position: relative;
 }
 
 .question {
@@ -158,14 +111,13 @@ a {
   padding: 0 7%;
   text-align: center;
 }
-
 .question p {
   margin: 0;
   color: var(--text);
   font-family: "Zen Kaku Gothic New", "IBM Plex Sans JP", sans-serif;
   font-size: clamp(1.55rem, 3.2vw, 2.45rem);
   font-weight: 300;
-  line-height: 1.8;
+  line-height: 1.95;
   letter-spacing: 0.055em;
 }
 
@@ -176,7 +128,6 @@ a {
   padding: 0 7%;
   text-align: center;
 }
-
 .statement p {
   margin: 0;
   max-width: 780px;
@@ -184,9 +135,9 @@ a {
   color: var(--text);
   font-family: "Zen Kaku Gothic New", "IBM Plex Sans JP", sans-serif;
   font-size: clamp(1.5rem, 3.55vw, 2.7rem);
-  line-height: 1.72;
+  line-height: 1.86;
   font-weight: 300;
-  letter-spacing: 0.035em;
+  letter-spacing: 0.04em;
 }
 
 .visual {
@@ -195,92 +146,83 @@ a {
   place-items: center;
   padding: 12vh 0;
 }
-
 .visual img {
-  width: min(70vw, 980px);
-  border-radius: 0;
-  filter: brightness(0.88) contrast(1.08) saturate(0.88);
-}
-
-.visual-02 img,
-.visual-03 img {
-  max-height: 78vh;
-  object-fit: contain;
+  width: min(72vw, 980px);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.9) contrast(1.06) saturate(0.92);
 }
 
 .fragment {
-  min-height: 72vh;
+  min-height: 78vh;
   display: grid;
   place-items: center;
   padding: 0 7%;
   text-align: center;
 }
-
 .fragment p {
   margin: 0;
   color: var(--text);
   font-family: "Zen Kaku Gothic New", "IBM Plex Sans JP", sans-serif;
   font-size: clamp(1.35rem, 3vw, 2.15rem);
   font-weight: 300;
-  line-height: 2.05;
-  letter-spacing: 0.045em;
+  line-height: 2.35;
+  letter-spacing: 0.05em;
 }
 
 .founders-note {
-  padding: 18vh 0 12vh;
+  padding: 14vh 0 8vh;
+  text-align: center;
 }
-
+.section-kicker {
+  margin: 0 0 3.6rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+}
 .note-body {
-  width: 84%;
-  max-width: 720px;
+  width: 82%;
+  max-width: 620px;
   margin: 0 auto;
   color: var(--body);
-  font-size: 1rem;
-  line-height: 2.08;
-  letter-spacing: 0.03em;
+  font-size: clamp(1rem, 1.6vw, 1.12rem);
+  line-height: 2.3;
+  letter-spacing: 0.04em;
 }
-
 .note-body p {
-  margin: 0 0 1.85rem;
+  margin: 0 0 2.8rem;
 }
-
-.note-body p:nth-last-child(2) {
-  margin-top: 4.4rem;
-}
-
 .note-body p:last-child {
-  margin-top: 1.2rem;
+  margin-top: 3.8rem;
   color: var(--text);
+}
+.note-end {
+  font-size: 1.02em;
 }
 
 .light-transition {
-  position: relative;
-  min-height: 135vh;
+  min-height: 115vh;
   overflow: hidden;
-  background: #000;
 }
-
-.light-bg,
-.light-wash {
+.light-bg, .transition-core {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
-
 .light-bg {
   background-image: url("assets/light-transition.jpg");
   background-size: cover;
-  background-position: center 42%;
-  filter: blur(34px) brightness(0.72) contrast(1.05) saturate(0.72);
-  transform: scale(1.18);
-  opacity: calc(0.05 + (var(--light-progress) * 0.34));
+  background-position: center 44%;
+  filter: blur(40px) brightness(0.66) contrast(1.04) saturate(0.72);
+  transform: scale(1.22);
+  opacity: calc(0.02 + (var(--light-progress) * 0.22));
 }
-
-.light-wash {
+.transition-core {
   background:
-    radial-gradient(circle at 52% 50%, rgba(232,232,232, calc(0.02 + var(--light-progress) * 0.16)), transparent 28%),
-    radial-gradient(circle at 60% 58%, rgba(210,210,210, calc(0.015 + var(--light-progress) * 0.12)), transparent 36%),
-    linear-gradient(to bottom, #000 0%, rgba(0,0,0, calc(0.98 - var(--light-progress) * 0.26)) 52%, #000 100%);
+    radial-gradient(circle at 52% 56%, rgba(245,245,245, calc(var(--light-progress) * 0.16)), transparent 18%),
+    radial-gradient(circle at 50% 58%, rgba(232,232,232, calc(var(--light-progress) * 0.1)), transparent 30%),
+    linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0, calc(0.98 - var(--light-progress) * 0.18)) 48%, rgba(0,0,0,1) 100%);
 }
 
 .room-section {
@@ -289,19 +231,15 @@ a {
   place-items: center;
   text-align: center;
   padding: 8vh 7%;
-  background: #000;
 }
-
 .room-section h2 {
   margin: 0;
   color: var(--text);
-  font-family: "IBM Plex Sans JP", system-ui, sans-serif;
   font-size: clamp(3.8rem, 10vw, 8rem);
   font-weight: 300;
   letter-spacing: 0.18em;
   line-height: 1;
 }
-
 .room-section p {
   margin: 34px 0 0;
   color: var(--muted);
@@ -315,61 +253,41 @@ a {
   place-items: center;
   padding: 10vh 7%;
   text-align: center;
-  background: #000;
 }
-
-.ticket-inner {
-  max-width: 720px;
-  width: 100%;
-}
-
+.ticket-inner { max-width: 720px; width: 100%; }
 .ticket-date {
   margin: 0 0 28px;
   font-size: clamp(1.65rem, 4vw, 2.65rem);
   letter-spacing: 0.12em;
 }
-
-.ticket-time,
-.ticket-place,
-.ticket-price {
+.ticket-time, .ticket-place, .ticket-price {
   margin: 0 0 24px;
   color: var(--text);
   font-size: 1rem;
-  line-height: 1.9;
+  line-height: 2;
   letter-spacing: 0.05em;
 }
-
-.ticket-price {
-  margin-top: 34px;
-}
-
+.ticket-price { margin-top: 34px; }
 .ticket-button {
   display: inline-grid;
   place-items: center;
   width: 210px;
   height: 50px;
   margin-top: 32px;
-  border: 1px solid rgba(232, 232, 232, 0.72);
+  border: 1px solid rgba(232,232,232,0.72);
   color: var(--text);
   text-decoration: none;
   font-size: 0.78rem;
   letter-spacing: 0.18em;
   transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
-
-.ticket-button:hover {
-  background: rgba(232, 232, 232, 0.9);
-  color: #000;
-  border-color: rgba(232, 232, 232, 0.9);
-}
-
+.ticket-button:hover { background: rgba(232,232,232,0.9); color:#000; border-color: rgba(232,232,232,0.9); }
 .ticket-help {
   margin: 12px 0 0;
   color: var(--muted);
   font-size: 0.78rem;
   letter-spacing: 0.05em;
 }
-
 .ticket-note {
   margin: 34px 0 0;
   color: var(--muted);
@@ -388,134 +306,39 @@ a {
   letter-spacing: 0.08em;
   padding: 6vh 7%;
 }
-
-.footer p {
-  margin: 0 0 0.8rem;
-}
-
-.footer p:last-child {
-  margin-bottom: 0;
-}
-
-.footer a {
-  color: var(--muted);
-  text-decoration: none;
-}
-
-.footer a:hover {
-  text-decoration: underline;
-}
+.footer p { margin: 0 0 0.8rem; }
+.footer p:last-child { margin-bottom: 0; }
+.footer a { color: var(--muted); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
 
 @media (max-width: 760px) {
-  .fixed-ticket {
-    top: 28px;
-    right: 28px;
-    font-size: 12px;
-  }
-
-  .hero-logo {
-    width: 70vw;
-  }
-
-  .black-gap-hero {
-    height: 36vh;
-  }
-
-  .black-gap-question {
-    height: 14vh;
-  }
-
-  .black-gap-statement {
-    height: 24vh;
-  }
-
-  .question {
-    min-height: 64vh;
-  }
-
-  .statement {
-    min-height: 88vh;
-  }
-
-  .statement p {
-    font-size: clamp(1.32rem, 4.8vw, 1.9rem);
-    line-height: 1.9;
-    width: 88%;
-  }
-
-  .visual {
-    min-height: 90vh;
-    padding: 7vh 0;
-  }
-
-  .visual img {
-    width: 92%;
-  }
-
-  .fragment {
-    min-height: 62vh;
-  }
-
-  .fragment p {
-    font-size: clamp(1.18rem, 4.5vw, 1.55rem);
-    line-height: 2.05;
-  }
-
-  .founders-note {
-    padding-top: 15vh;
-  }
-
-  .note-body {
-    width: 84%;
-    font-size: 0.94rem;
-    line-height: 2.05;
-  }
-
-  .light-transition {
-    min-height: 115vh;
-  }
-
-  .light-bg {
-    filter: blur(26px) brightness(0.72) contrast(1.05) saturate(0.72);
-  }
-
-  .room-section {
-    min-height: 60vh;
-  }
-
-  .room-section h2 {
-    letter-spacing: 0.15em;
-  }
-
-  .ticket-section {
-    min-height: 80vh;
-  }
-
-  .ticket-button {
-    width: 220px;
-  }
-
-  .footer {
-    min-height: 28vh;
-  }
+  .fixed-ticket { top: 28px; right: 28px; font-size: 12px; }
+  .hero-logo { width: 70vw; }
+  .black-gap-hero { height: 36vh; }
+  .black-gap-question { height: 16vh; }
+  .black-gap-statement { height: 24vh; }
+  .question { min-height: 64vh; }
+  .statement { min-height: 88vh; }
+  .statement p { font-size: clamp(1.32rem, 4.8vw, 1.9rem); line-height: 2; width: 88%; }
+  .visual { min-height: 86vh; padding: 7vh 0; }
+  .visual img { width: 92%; }
+  .fragment { min-height: 64vh; }
+  .fragment p { font-size: clamp(1.18rem, 4.5vw, 1.55rem); line-height: 2.25; }
+  .founders-note { padding-top: 12vh; }
+  .section-kicker { margin-bottom: 2.8rem; }
+  .note-body { width: 84%; font-size: 0.98rem; line-height: 2.3; }
+  .note-body p { margin-bottom: 2.6rem; }
+  .light-transition { min-height: 100vh; }
+  .light-bg { filter: blur(28px) brightness(0.66) contrast(1.04) saturate(0.72); }
+  .room-section { min-height: 60vh; }
+  .room-section h2 { letter-spacing: 0.15em; }
+  .ticket-section { min-height: 80vh; }
+  .ticket-button { width: 220px; }
+  .footer { min-height: 28vh; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .hero-logo,
-  .hero-tagline,
-  .scroll-line,
-  .reveal {
-    animation: none;
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .fixed-ticket {
-    transition: none;
-  }
+  html { scroll-behavior: auto; }
+  .hero-logo, .hero-tagline, .scroll-line, .reveal { animation:none; transition:none; opacity:1; transform:none; }
+  .fixed-ticket { transition:none; }
 }

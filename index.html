@@ -18,9 +18,10 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <canvas class="particle-canvas" aria-hidden="true"></canvas>
   <a class="fixed-ticket" href="#ticket" aria-label="Ticket">TICKET</a>
 
-  <main>
+  <main class="site-main">
     <section class="hero" id="top" aria-label="Hero">
       <div class="hero-inner">
         <img class="hero-logo" src="assets/hero-logo.png" alt="琉球大学医学部軽音楽部 ロゴ">
@@ -47,7 +48,7 @@
 
     <div class="black-gap black-gap-statement" aria-hidden="true"></div>
 
-    <section class="visual visual-01 reveal" aria-label="Visual 01">
+    <section class="visual reveal" aria-label="Visual 01">
       <img src="assets/visual01.jpg" alt="">
     </section>
 
@@ -55,7 +56,7 @@
       <p>言葉にならない感情に、<br>名前を与えること。</p>
     </section>
 
-    <section class="visual visual-02 reveal" aria-label="Visual 02">
+    <section class="visual reveal" aria-label="Visual 02">
       <img src="assets/visual02.jpg" alt="">
     </section>
 
@@ -63,7 +64,7 @@
       <p>今までにない景色を、<br>見せてくれること。</p>
     </section>
 
-    <section class="visual visual-03 reveal" aria-label="Visual 03">
+    <section class="visual reveal" aria-label="Visual 03">
       <img src="assets/visual03.jpg" alt="">
     </section>
 
@@ -74,26 +75,22 @@
     <div class="black-gap black-gap-visual" aria-hidden="true"></div>
 
     <section class="founders-note reveal" aria-label="Founder’s Note">
+      <p class="section-kicker">FOUNDER'S NOTE</p>
       <div class="note-body">
-        <p>私たちは、その可能性を何度も音楽の中に見出してきました。</p>
         <p>だから、この夜をつくります。</p>
-        <p>演奏を披露するためだけではありません。</p>
-        <p>上手さを競うためでもありません。</p>
-        <p>音と光、沈黙、そしてその場にいるすべての人と、</p>
-        <p>一つの空間をつくるためです。</p>
-        <p>この一夜が、あなたの心に小さな灯りをともすことができたなら。</p>
-        <p>私たちにとって、それ以上に嬉しいことはありません。</p>
-        <p>その可能性を信じて、11月22日。</p>
-        <p>音で満たされる空間へ。</p>
+        <p>演奏を披露するためだけではありません。<br>上手さを競うためでもありません。</p>
+        <p>音と光、沈黙、そしてその場にいるすべての人と、<br>ひとつの空間をつくるためです。</p>
+        <p>この一夜が、<br>あなたの心に小さな灯りをともすことができたなら。</p>
+        <p class="note-end">それが、私たちにとってのROOMです。</p>
       </div>
     </section>
 
     <section class="light-transition" aria-label="Light Transition">
       <div class="light-bg" aria-hidden="true"></div>
-      <div class="light-wash" aria-hidden="true"></div>
+      <div class="transition-core" aria-hidden="true"></div>
     </section>
 
-    <section class="room-section reveal" aria-label="ROOM">
+    <section class="room-section reveal" id="room" aria-label="ROOM">
       <h2>ROOM</h2>
       <p>音で満たされる空間へ。</p>
     </section>
