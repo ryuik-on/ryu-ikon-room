@@ -38,8 +38,8 @@ function updateLightTransition() {
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
   // ROOMへの入口。中盤から縦の光が開き、終盤で消えてROOMだけが残る。
-  const doorOpen = clamp((progress - 0.34) / 0.38, 0, 1);
-  const doorFade = clamp((progress - 0.78) / 0.18, 0, 1);
+  const doorOpen = clamp((progress - 0.32) / 0.34, 0, 1);
+  const doorFade = clamp((progress - 0.68) / 0.16, 0, 1);
 
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
   document.documentElement.style.setProperty('--door-progress', doorOpen.toFixed(3));
@@ -91,11 +91,11 @@ function updateRoomProgress() {
   const rect = roomSection.getBoundingClientRect();
 
   // ROOMに近づくほど光を集める。
-  // ROOMが表示されたあと、少しだけ残してからはけさせる。
-  const gatherStart = window.innerHeight * 1.18;
-  const gatherEnd = window.innerHeight * 0.52;
-  const fadeStart = -window.innerHeight * 0.14;
-  const fadeEnd = -window.innerHeight * 0.88;
+  // ROOMが見え始める前に、光ははけきる。
+  const gatherStart = window.innerHeight * 1.22;
+  const gatherEnd = window.innerHeight * 0.72;
+  const fadeStart = window.innerHeight * 1.02;
+  const fadeEnd = window.innerHeight * 0.64;
 
   const gather = clamp((gatherStart - rect.top) / (gatherStart - gatherEnd), 0, 1);
   const fade = clamp((fadeStart - rect.top) / (fadeStart - fadeEnd), 0, 1);
@@ -125,7 +125,7 @@ function drawParticles(time) {
   const roomPull = roomProgress.gather;
   const fadeOut = roomProgress.fade;
   const entrancePull = clamp((entranceProgress - 0.22) / 0.55, 0, 1) * (1 - clamp((entranceProgress - 0.82) / 0.16, 0, 1));
-  const particlePresence = clamp(strength * (1 - fadeOut), 0, 1);
+  const particlePresence = clamp(strength * Math.pow(1 - fadeOut, 1.8), 0, 1);
   const earlyMinimum = particlePresence > 0.03 ? 2 : 0;
   const visibleCount = Math.max(earlyMinimum, Math.floor(particles.length * particlePresence));
   const centerX = width * 0.50;

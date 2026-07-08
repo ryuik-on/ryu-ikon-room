@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 260" role="img" aria-labelledby="title desc">
+  <title id="title">ROOM</title>
+  <desc id="desc">ROOM event logotype</desc>
+  <rect width="1400" height="260" fill="none"/>
+  <text x="700" y="160"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        font-family="Didot, Bodoni 72, Bodoni 72 Smallcaps, Bodoni MT, Georgia, 'Times New Roman', serif"
+        font-size="170"
+        font-weight="600"
+        letter-spacing="88"
+        fill="#f1f1f1">ROOM</text>
+</svg>

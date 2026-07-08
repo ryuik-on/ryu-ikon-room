@@ -150,9 +150,38 @@ a { color: inherit; }
   color: var(--text);
   font-family: "Zen Kaku Gothic New", "IBM Plex Sans JP", sans-serif;
   font-size: clamp(1.5rem, 3.55vw, 2.7rem);
-  line-height: 1.86;
+  line-height: 1.92;
   font-weight: 300;
   letter-spacing: 0.04em;
+}
+
+.statement span {
+  display: block;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 1.05s ease, transform 1.05s ease;
+}
+
+.statement span + span {
+  margin-top: 2.6rem;
+}
+
+.statement.is-visible span:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.05s;
+}
+
+.statement.is-visible span:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.45s;
+}
+
+.statement.is-visible span:nth-child(3) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.85s;
 }
 
 .visual {
@@ -275,30 +304,40 @@ a { color: inherit; }
 }
 
 .room-section {
-  min-height: 158vh;
+  min-height: 172vh;
   display: grid;
   place-items: center;
   text-align: center;
   padding: 8vh 7%;
+  isolation: isolate;
 }
 
 .room-section > * {
   position: sticky;
-  top: 42vh;
+  top: 41vh;
 }
 .room-section h2 {
-  margin: 0;
-  color: var(--text);
-  font-size: clamp(3.8rem, 10vw, 8rem);
-  font-weight: 300;
-  letter-spacing: 0.18em;
-  line-height: 1;
+  display: none;
 }
+
+.room-logo {
+  width: min(78vw, 1040px);
+  max-height: 28vh;
+  object-fit: contain;
+  opacity: 0;
+  transform: translateY(8px) scale(0.985);
+  filter: drop-shadow(0 0 18px rgba(255,255,255,0.035));
+  transition: opacity 1.45s ease, transform 1.45s ease, filter 1.45s ease;
+}
+
+.room-section.is-visible .room-logo {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: drop-shadow(0 0 22px rgba(255,255,255,0.05));
+}
+
 .room-section p {
-  margin: 34px 0 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
+  display: none;
 }
 
 .ticket-bridge {
@@ -395,7 +434,8 @@ a { color: inherit; }
     line-height: 2.15;
   }
   .statement { min-height: 88vh; }
-  .statement p { font-size: clamp(1.32rem, 4.8vw, 1.9rem); line-height: 2; width: 88%; }
+  .statement p { font-size: clamp(1.26rem, 4.7vw, 1.82rem); line-height: 1.95; width: 90%; }
+  .statement span + span { margin-top: 2.25rem; }
   .visual { min-height: 86vh; padding: 7vh 0; }
   .visual img { width: 92%; }
   .fragment { min-height: 64vh; }
@@ -406,8 +446,12 @@ a { color: inherit; }
   .note-body p { margin-bottom: 2.6rem; }
   .light-transition { min-height: 118vh; }
   .light-bg { filter: blur(28px) brightness(0.66) contrast(1.04) saturate(0.72); }
-  .room-section { min-height: 138vh; }
-  .room-section > * { top: 41vh; }
+  .room-section { min-height: 150vh; }
+  .room-section > * { top: 42vh; }
+  .room-logo {
+    width: min(88vw, 680px);
+    max-height: 22vh;
+  }
   .room-section h2 { letter-spacing: 0.15em; }
   .ticket-section { min-height: 80vh; }
   .ticket-button { width: 220px; }
