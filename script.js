@@ -34,22 +34,28 @@ function updateLightTransition() {
   if (!lightTransition) return 0;
   const rect = lightTransition.getBoundingClientRect();
 
-  const start = window.innerHeight * 0.96;
-  const end = -rect.height * 0.10;
+  const start = window.innerHeight * 0.98;
+  const end = -rect.height * 0.08;
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
-  // スクショ案の「入口へ向かう」コピーを中盤に置き、ROOM出現へ引き継ぐ。
-  const copyIn = clamp((progress - 0.18) / 0.18, 0, 1);
-  const copyOut = clamp((progress - 0.70) / 0.18, 0, 1);
-  const entranceCopy = copyIn * (1 - copyOut);
+  // 2画面構成：
+  // 前半は3行テキスト、後半は「静かに、その入口へ。」だけを残す。
+  const primaryIn = clamp((progress - 0.10) / 0.16, 0, 1);
+  const primaryOut = clamp((progress - 0.46) / 0.16, 0, 1);
+  const primaryCopy = primaryIn * (1 - primaryOut);
 
-  const doorOpen = clamp((progress - 0.46) / 0.32, 0, 1);
-  const doorFade = clamp((progress - 0.82) / 0.12, 0, 1);
+  const secondaryIn = clamp((progress - 0.50) / 0.15, 0, 1);
+  const secondaryOut = clamp((progress - 0.78) / 0.13, 0, 1);
+  const secondaryCopy = secondaryIn * (1 - secondaryOut);
+
+  const doorOpen = clamp((progress - 0.54) / 0.30, 0, 1);
+  const doorFade = clamp((progress - 0.88) / 0.10, 0, 1);
 
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
   document.documentElement.style.setProperty('--door-progress', doorOpen.toFixed(3));
   document.documentElement.style.setProperty('--door-fade', doorFade.toFixed(3));
-  document.documentElement.style.setProperty('--entrance-copy', entranceCopy.toFixed(3));
+  document.documentElement.style.setProperty('--entrance-copy', primaryCopy.toFixed(3));
+  document.documentElement.style.setProperty('--entrance-copy-secondary', secondaryCopy.toFixed(3));
 
   return progress;
 }
@@ -82,7 +88,7 @@ function createParticles(count = 30) {
     particles.push({
       x: Math.random(),
       y: Math.random(),
-      size: 0.45 + Math.random() * 1.55,
+      size: 0.45 + Math.random() * 1.35,
       speedY: 0.0008 + Math.random() * 0.0014,
       speedX: (Math.random() - 0.5) * 0.0007,
       twinkle: Math.random() * Math.PI * 2,
@@ -96,24 +102,21 @@ function updateRoomProgress() {
   if (!roomSection) return { gather: 0, fade: 0, visible: 0, beyond: 0, copy: 0, release: 0 };
   const rect = roomSection.getBoundingClientRect();
 
-  // ROOMは入口の前で止まる。コピーと奥の光が重なって“溜まり”を作り、
-  // その後、光とコピーだけが引いてROOMだけが残る。
   const start = window.innerHeight * 1.05;
   const end = -rect.height * 0.18;
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
-  const gather = clamp((progress - 0.04) / 0.2, 0, 1);
+  const gather = clamp((progress - 0.04) / 0.20, 0, 1);
   const copyIn = clamp((progress - 0.24) / 0.16, 0, 1);
   const release = clamp((progress - 0.74) / 0.18, 0, 1);
   const copy = copyIn * (1 - release);
   const beyondIn = clamp((progress - 0.30) / 0.16, 0, 1);
   const beyond = beyondIn * (1 - release * 0.92);
-  const fade = release;
 
   return {
     gather,
-    fade,
-    visible: gather * (1 - fade),
+    fade: release,
+    visible: gather * (1 - release),
     beyond,
     copy,
     release
@@ -142,16 +145,7 @@ function drawParticles(time) {
   const earlyMinimum = particlePresence > 0.03 ? 2 : 0;
   const visibleCount = Math.max(earlyMinimum, Math.floor(particles.length * particlePresence));
   const centerX = width * 0.50;
-  const centerY = height * 0.52;
-
-  // subtle accumulated glow
-  if (particlePresence > 0.02) {
-    const glow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.min(width, height) * 0.42);
-    glow.addColorStop(0, `rgba(235,235,235,${(0.018 + roomPull * 0.055 + entrancePull * 0.08) * (1 - fadeOut)})`);
-    glow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, width, height);
-  }
+  const centerY = height * 0.58;
 
   particles.forEach((p, idx) => {
     // update
@@ -161,11 +155,11 @@ function drawParticles(time) {
     p.x += p.speedX * (0.3 + strength) + Math.sin(p.phase) * 0.00024;
 
     if (entrancePull > 0.01) {
-      p.x += ((centerX / width) - p.x) * (0.0012 + entrancePull * 0.0042);
-      p.y += ((centerY / height) - p.y) * (0.0010 + entrancePull * 0.0032);
+      p.x += ((centerX / width) - p.x) * (0.00045 + entrancePull * 0.0012);
+      p.y += ((centerY / height) - p.y) * (0.00042 + entrancePull * 0.0010);
     } else if (roomPull > 0.01) {
-      p.x += ((centerX / width) - p.x) * (0.0007 + roomPull * 0.0023);
-      p.y += ((centerY / height) - p.y) * (0.0005 + roomPull * 0.0017);
+      p.x += ((centerX / width) - p.x) * (0.00025 + roomPull * 0.00065);
+      p.y += ((centerY / height) - p.y) * (0.00020 + roomPull * 0.00055);
     }
 
     // ROOM到達後は粒が外へはける。
@@ -218,7 +212,7 @@ update();
 
 if (!prefersReducedMotion && ctx) {
   resizeCanvas();
-  createParticles(46);
+  createParticles(34);
   animationFrameId = window.requestAnimationFrame(drawParticles);
 } else if (canvas) {
   canvas.remove();
