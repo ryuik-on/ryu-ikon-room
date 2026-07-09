@@ -16,6 +16,53 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@300;400&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicEvent",
+  "name": "ROOM｜琉球大学医学部軽音楽部",
+  "description": "11月22日、テンブスホールにて開催。琉大医学部軽音部によるライブイベント「ROOM」。音と光でつくる、一夜限りの空間。",
+  "startDate": "2026-11-22T17:00:00+09:00",
+  "doorTime": "2026-11-22T16:00:00+09:00",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "location": {
+    "@type": "Place",
+    "name": "那覇市ぶんかテンブス館 テンブスホール",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "那覇市",
+      "addressRegion": "沖縄県",
+      "addressCountry": "JP"
+    }
+  },
+  "organizer": {
+    "@type": "Organization",
+    "name": "Ryuik-on",
+    "url": "https://www.instagram.com/ryuikeion/"
+  },
+  "performer": {
+    "@type": "MusicGroup",
+    "name": "琉球大学医学部軽音楽部"
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "学生",
+      "price": "1000",
+      "priceCurrency": "JPY",
+      "availability": "https://schema.org/InStock"
+    },
+    {
+      "@type": "Offer",
+      "name": "一般",
+      "price": "1500",
+      "priceCurrency": "JPY",
+      "availability": "https://schema.org/InStock"
+    }
+  ]
+}
+  </script>
 </head>
 <body>
   <canvas class="particle-canvas" aria-hidden="true"></canvas>
@@ -94,7 +141,10 @@
     </section>
 
     <section class="room-section reveal" id="room" aria-label="ROOM">
-      <img class="room-logo" src="assets/room-logo.svg" alt="ROOM">
+      <div class="room-mark">
+        <img class="room-logo" src="assets/room-logo.svg" alt="ROOM">
+        <p class="room-copy">音で満たされる空間へ。</p>
+      </div>
     </section>
 
     <section class="ticket-bridge reveal" aria-label="Ticket Lead">
@@ -103,7 +153,7 @@
 
     <section class="ticket-section reveal" id="ticket" aria-label="Ticket">
       <div class="ticket-inner">
-        <p class="ticket-date">2026.11.22</p>
+        <p class="ticket-date">2026.11.22 SUN</p>
         <p class="ticket-time">OPEN 16:00 / START 17:00</p>
         <p class="ticket-place">那覇市ぶんかテンブス館<br>テンブスホール</p>
         <p class="ticket-price">学生 1,000円<br>一般 1,500円</p>

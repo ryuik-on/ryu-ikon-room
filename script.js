@@ -4,6 +4,7 @@ const lightTransition = document.querySelector('.light-transition');
 const roomSection = document.querySelector('#room');
 const canvas = document.querySelector('.particle-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -76,7 +77,7 @@ function createParticles(count = 30) {
     particles.push({
       x: Math.random(),
       y: Math.random(),
-      size: 1 + Math.random() * 3.2,
+      size: 0.45 + Math.random() * 1.55,
       speedY: 0.0008 + Math.random() * 0.0014,
       speedX: (Math.random() - 0.5) * 0.0007,
       twinkle: Math.random() * Math.PI * 2,
@@ -87,23 +88,30 @@ function createParticles(count = 30) {
 }
 
 function updateRoomProgress() {
-  if (!roomSection) return { gather: 0, fade: 0, visible: 0 };
+  if (!roomSection) return { gather: 0, fade: 0, visible: 0, beyond: 0, copy: 0, release: 0 };
   const rect = roomSection.getBoundingClientRect();
 
-  // ROOMに近づくほど光を集める。
-  // ROOMが見え始める前に、光ははけきる。
-  const gatherStart = window.innerHeight * 1.22;
-  const gatherEnd = window.innerHeight * 0.72;
-  const fadeStart = window.innerHeight * 1.02;
-  const fadeEnd = window.innerHeight * 0.64;
+  // ROOMは入口の前で止まる。コピーと奥の光が重なって“溜まり”を作り、
+  // その後、光とコピーだけが引いてROOMだけが残る。
+  const start = window.innerHeight * 1.05;
+  const end = -rect.height * 0.18;
+  const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
-  const gather = clamp((gatherStart - rect.top) / (gatherStart - gatherEnd), 0, 1);
-  const fade = clamp((fadeStart - rect.top) / (fadeStart - fadeEnd), 0, 1);
+  const gather = clamp((progress - 0.04) / 0.2, 0, 1);
+  const copyIn = clamp((progress - 0.24) / 0.16, 0, 1);
+  const release = clamp((progress - 0.74) / 0.18, 0, 1);
+  const copy = copyIn * (1 - release);
+  const beyondIn = clamp((progress - 0.30) / 0.16, 0, 1);
+  const beyond = beyondIn * (1 - release * 0.92);
+  const fade = release;
 
   return {
     gather,
     fade,
-    visible: gather * (1 - fade)
+    visible: gather * (1 - fade),
+    beyond,
+    copy,
+    release
   };
 }
 
@@ -118,7 +126,7 @@ function updateGlobalProgress() {
 }
 
 function drawParticles(time) {
-  if (!ctx || !canvas) return;
+  if (prefersReducedMotion || !ctx || !canvas) return;
   ctx.clearRect(0, 0, width, height);
 
   const strength = globalProgress;
@@ -174,11 +182,11 @@ function drawParticles(time) {
     const y = p.y * height;
     const twinkle = 0.45 + 0.55 * Math.sin(time * 0.0012 + p.twinkle);
     const alpha = (0.025 + particlePresence * 0.32 + roomPull * 0.18 + entrancePull * 0.28) * twinkle * Math.pow(1 - fadeOut, 1.35);
-    const radius = p.size + roomPull * 0.65 + entrancePull * 1.25;
+    const radius = p.size + roomPull * 0.28 + entrancePull * 0.55;
 
     ctx.beginPath();
     ctx.fillStyle = `rgba(235, 239, 255, ${alpha})`;
-    ctx.shadowBlur = 10 + radius * 4 + roomPull * 18;
+    ctx.shadowBlur = 4 + radius * 1.6 + roomPull * 4;
     ctx.shadowColor = `rgba(210, 225, 255, ${0.14 + alpha})`;
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
@@ -193,12 +201,20 @@ function update() {
   entranceProgress = updateLightTransition();
   globalProgress = updateGlobalProgress();
   roomProgress = updateRoomProgress();
+  document.documentElement.style.setProperty('--room-beyond', (roomProgress.beyond || 0).toFixed(3));
+  document.documentElement.style.setProperty('--room-copy', (roomProgress.copy || 0).toFixed(3));
+  document.documentElement.style.setProperty('--room-release', (roomProgress.release || 0).toFixed(3));
 }
 
 window.addEventListener('scroll', update, { passive: true });
-window.addEventListener('resize', () => { resizeCanvas(); update(); });
+window.addEventListener('resize', () => { if (!prefersReducedMotion) resizeCanvas(); update(); });
 
-resizeCanvas();
-createParticles(42);
 update();
-if (ctx) animationFrameId = window.requestAnimationFrame(drawParticles);
+
+if (!prefersReducedMotion && ctx) {
+  resizeCanvas();
+  createParticles(46);
+  animationFrameId = window.requestAnimationFrame(drawParticles);
+} else if (canvas) {
+  canvas.remove();
+}

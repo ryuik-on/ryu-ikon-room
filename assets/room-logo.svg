@@ -1,13 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 260" role="img" aria-labelledby="title desc">
-  <title id="title">ROOM</title>
-  <desc id="desc">ROOM event logotype</desc>
-  <rect width="1400" height="260" fill="none"/>
-  <text x="700" y="160"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 330" role="img" aria-labelledby="title desc">
+  <title id="title">ROOM by Ryuik-on</title>
+  <desc id="desc">ROOM event wordmark by Ryuik-on</desc>
+  <rect width="1400" height="330" fill="none"/>
+  <text x="700" y="155"
         text-anchor="middle"
         dominant-baseline="middle"
         font-family="Didot, Bodoni 72, Bodoni 72 Smallcaps, Bodoni MT, Georgia, 'Times New Roman', serif"
-        font-size="170"
+        font-size="178"
         font-weight="600"
-        letter-spacing="88"
-        fill="#f1f1f1">ROOM</text>
+        letter-spacing="58"
+        fill="#f2f2f2">ROOM</text>
+  <text x="1040" y="255"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        font-family="IBM Plex Sans JP, Helvetica Neue, Arial, sans-serif"
+        font-size="28"
+        font-weight="300"
+        letter-spacing="8"
+        fill="#a8a8a8">by Ryuik-on</text>
 </svg>
