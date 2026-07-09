@@ -247,8 +247,11 @@ a { color: inherit; }
 }
 
 .light-transition {
-  min-height: 142vh;
+  min-height: 168vh;
   overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 0 7%;
 }
 .light-bg, .transition-core, .room-door {
   position: absolute;
@@ -304,6 +307,33 @@ a { color: inherit; }
   filter: blur(22px);
 }
 
+
+.entrance-copy {
+  position: sticky;
+  top: 42vh;
+  z-index: 3;
+  width: min(88vw, 720px);
+  text-align: center;
+  color: rgba(238,238,238,0.82);
+  font-family: "Zen Kaku Gothic New", "IBM Plex Sans JP", sans-serif;
+  font-size: clamp(0.94rem, 1.55vw, 1.12rem);
+  font-weight: 300;
+  line-height: 2.28;
+  letter-spacing: 0.13em;
+  opacity: var(--entrance-copy);
+  transform: translateY(calc((1 - var(--entrance-copy)) * 10px));
+  filter: drop-shadow(0 0 18px rgba(245,245,245, calc(var(--entrance-copy) * 0.06)));
+  pointer-events: none;
+}
+
+.entrance-copy p {
+  margin: 0 0 1.15rem;
+}
+
+.entrance-copy p:last-child {
+  margin-bottom: 0;
+}
+
 .room-section {
   min-height: 210vh;
   display: grid;
@@ -325,7 +355,7 @@ a { color: inherit; }
   background:
     radial-gradient(ellipse at center,
       rgba(244,246,255, calc(0.03 + var(--room-beyond) * 0.115)) 0%,
-      rgba(218,226,255, calc(var(--room-beyond) * 0.055)) 24%,
+      rgba(218,226,255, calc(var(--room-beyond) * 0.035)) 24%,
       rgba(0,0,0,0) 70%);
   filter: blur(28px);
   opacity: calc(0.1 + var(--room-beyond) * 0.9);
@@ -543,7 +573,7 @@ a { color: inherit; }
   .section-kicker { margin-bottom: 2.8rem; }
   .note-body { width: 84%; font-size: 0.98rem; line-height: 2.3; }
   .note-body p { margin-bottom: 2.6rem; }
-  .light-transition { min-height: 124vh; }
+  .light-transition { min-height: 146vh; }
   .light-bg { filter: blur(28px) brightness(0.66) contrast(1.04) saturate(0.72); }
   .room-section { min-height: 172vh; padding-bottom: 18vh; }
   .room-section::before { width: 86vw; height: 21vh; top: 56%; }
@@ -568,4 +598,39 @@ a { color: inherit; }
   .hero-logo, .hero-tagline, .scroll-line, .reveal { animation:none; transition:none; opacity:1; transform:none; }
   .fixed-ticket { transition:none; }
   .ticket-section.is-visible .ticket-inner::after { animation: none; opacity: 0; }
+}
+
+.ticket-inner::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -30%;
+  width: 1px;
+  height: 34%;
+  background: linear-gradient(180deg, transparent, rgba(240,246,255,0.86), transparent);
+  box-shadow: 0 0 14px rgba(230,240,255,0.24);
+  opacity: 0;
+  pointer-events: none;
+}
+.ticket-section.is-visible .ticket-inner::after {
+  animation: ticketLightSide 3.2s ease 1.25s forwards;
+}
+@keyframes ticketLightTop {
+  0% { opacity: 0; transform: translateX(0); }
+  18% { opacity: 0.82; }
+  100% { opacity: 0; transform: translateX(410%); }
+}
+@keyframes ticketLightSide {
+  0% { opacity: 0; transform: translateY(0); }
+  18% { opacity: 0.72; }
+  100% { opacity: 0; transform: translateY(410%); }
+}
+
+
+.room-logo-rendered {
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+.room-section.is-visible .room-logo-rendered {
+  opacity: 1;
 }

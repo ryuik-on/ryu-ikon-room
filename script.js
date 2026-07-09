@@ -34,17 +34,22 @@ function updateLightTransition() {
   if (!lightTransition) return 0;
   const rect = lightTransition.getBoundingClientRect();
 
-  const start = window.innerHeight * 0.94;
-  const end = -rect.height * 0.12;
+  const start = window.innerHeight * 0.96;
+  const end = -rect.height * 0.10;
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
-  // ROOMへの入口。中盤から縦の光が開き、終盤で消えてROOMだけが残る。
-  const doorOpen = clamp((progress - 0.32) / 0.34, 0, 1);
-  const doorFade = clamp((progress - 0.68) / 0.16, 0, 1);
+  // スクショ案の「入口へ向かう」コピーを中盤に置き、ROOM出現へ引き継ぐ。
+  const copyIn = clamp((progress - 0.18) / 0.18, 0, 1);
+  const copyOut = clamp((progress - 0.70) / 0.18, 0, 1);
+  const entranceCopy = copyIn * (1 - copyOut);
+
+  const doorOpen = clamp((progress - 0.46) / 0.32, 0, 1);
+  const doorFade = clamp((progress - 0.82) / 0.12, 0, 1);
 
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
   document.documentElement.style.setProperty('--door-progress', doorOpen.toFixed(3));
   document.documentElement.style.setProperty('--door-fade', doorFade.toFixed(3));
+  document.documentElement.style.setProperty('--entrance-copy', entranceCopy.toFixed(3));
 
   return progress;
 }
@@ -133,7 +138,7 @@ function drawParticles(time) {
   const roomPull = roomProgress.gather;
   const fadeOut = roomProgress.fade;
   const entrancePull = clamp((entranceProgress - 0.22) / 0.55, 0, 1) * (1 - clamp((entranceProgress - 0.82) / 0.16, 0, 1));
-  const particlePresence = clamp(strength * Math.pow(1 - fadeOut, 1.8), 0, 1);
+  const particlePresence = clamp((strength + entrancePull * 0.22) * Math.pow(1 - fadeOut, 1.8), 0, 1);
   const earlyMinimum = particlePresence > 0.03 ? 2 : 0;
   const visibleCount = Math.max(earlyMinimum, Math.floor(particles.length * particlePresence));
   const centerX = width * 0.50;
