@@ -14,8 +14,8 @@ const revealObserver = new IntersectionObserver((entries) => {
     }
   });
 }, {
-  threshold: 0.16,
-  rootMargin: '0px 0px -8% 0px'
+  threshold: 0.05,
+  rootMargin: '0px 0px 20% 0px'
 });
 revealElements.forEach((el) => revealObserver.observe(el));
 
@@ -35,8 +35,8 @@ function updateLightTransition() {
     return {
       progress: 0,
       fieldReveal: 0,
-      fieldHold: 0,
-      surroundFade: 0,
+      inward: 0,
+      particleFade: 0,
       guide: 0,
       blackout: 0
     };
@@ -47,56 +47,47 @@ function updateLightTransition() {
   const end = -rect.height * 0.09;
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
-  const primaryIn = clamp((progress - 0.035) / 0.10, 0, 1);
-  const primaryOut = clamp((progress - 0.22) / 0.10, 0, 1);
-  const primaryCopy = primaryIn * (1 - primaryOut);
+  // The entrance copy finishes its role early, before the light starts moving.
+  const copyIn = clamp((progress - 0.025) / 0.075, 0, 1);
+  const copyOut = clamp((progress - 0.145) / 0.075, 0, 1);
+  const entranceCopy = copyIn * (1 - copyOut);
+  const entranceCopyRise = copyOut * 8;
 
-  const secondaryIn = clamp((progress - 0.29) / 0.09, 0, 1);
-  const secondaryOut = clamp((progress - 0.48) / 0.11, 0, 1);
-  const secondaryCopy = secondaryIn * (1 - secondaryOut);
+  // The field opens after the copy has mostly disappeared.
+  const fieldReveal = clamp((progress - 0.205) / 0.22, 0, 1);
 
-  const fieldReveal = clamp((progress - 0.47) / 0.18, 0, 1);
-  const fieldHold = clamp((progress - 0.63) / 0.06, 0, 1);
-  const surroundFade = clamp((progress - 0.71) / 0.15, 0, 1);
+  // Particles move toward the entrance but disappear before forming a cluster.
+  const inward = clamp((progress - 0.43) / 0.31, 0, 1);
+  const particleFade = clamp((progress - 0.61) / 0.19, 0, 1);
 
-  // The central light already exists before the field fully opens.
-  const guideIn = clamp((progress - 0.39) / 0.12, 0, 1);
-  const companionsIn = clamp((progress - 0.57) / 0.08, 0, 1);
-  const companionsOut = clamp((progress - 0.84) / 0.055, 0, 1);
-  const companionOpacity = companionsIn * (1 - companionsOut);
+  // The final viewer light remains alone, recedes, then disappears completely.
+  const guideIn = clamp((progress - 0.57) / 0.08, 0, 1);
+  const guideOut = clamp((progress - 0.78) / 0.105, 0, 1);
+  const guideOpacity = guideIn * (1 - guideOut);
+  const guideScale = 1 - guideOut * 0.82;
+  const guideY = 54.5 - guideOut * 1.2;
 
-  const travel = clamp((progress - 0.84) / 0.09, 0, 1);
-  const settle = clamp((progress - 0.915) / 0.03, 0, 1);
-  const vanish = clamp((progress - 0.948) / 0.022, 0, 1);
-
-  const blackoutIn = clamp((progress - 0.968) / 0.014, 0, 1);
-  const blackoutOut = clamp((progress - 0.984) / 0.016, 0, 1);
-  const blackout = blackoutIn * (1 - blackoutOut);
-
-  // Slightly above centre, then recedes toward the threshold.
-  const guideY = 54.5 + travel * 14.5;
-  const guideScale = 1.07 - travel * 0.44 - settle * 0.21;
-  const guideStretch = settle * (1 - vanish);
-  const guideOpacity = guideIn * (1 - vanish);
+  // Pure black at the end of the entrance section.
+  const blackout = clamp((progress - 0.875) / 0.055, 0, 1);
 
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
-  document.documentElement.style.setProperty('--entrance-copy', primaryCopy.toFixed(3));
-  document.documentElement.style.setProperty('--entrance-copy-secondary', secondaryCopy.toFixed(3));
+  document.documentElement.style.setProperty('--entrance-copy', entranceCopy.toFixed(3));
+  document.documentElement.style.setProperty('--entrance-copy-rise', entranceCopyRise.toFixed(3));
+  document.documentElement.style.setProperty('--entrance-copy-secondary', '0');
   document.documentElement.style.setProperty('--field-reveal', fieldReveal.toFixed(3));
   document.documentElement.style.setProperty('--guide-opacity', guideOpacity.toFixed(3));
   document.documentElement.style.setProperty('--guide-y', guideY.toFixed(3));
-  document.documentElement.style.setProperty('--guide-scale', Math.max(0.16, guideScale).toFixed(3));
-  document.documentElement.style.setProperty('--guide-stretch', guideStretch.toFixed(3));
-  document.documentElement.style.setProperty('--companion-opacity', companionOpacity.toFixed(3));
+  document.documentElement.style.setProperty('--guide-scale', Math.max(0.12, guideScale).toFixed(3));
+  document.documentElement.style.setProperty('--guide-stretch', '0');
+  document.documentElement.style.setProperty('--companion-opacity', '0');
   document.documentElement.style.setProperty('--blackout-opacity', blackout.toFixed(3));
 
   return {
     progress,
     fieldReveal,
-    fieldHold,
-    surroundFade,
+    inward,
+    particleFade,
     guide: guideOpacity,
-    companionOpacity,
     blackout
   };
 }
@@ -109,7 +100,7 @@ let height = 0;
 let animationFrameId = null;
 let globalProgress = 0;
 let roomProgress = { gather: 0, fade: 0, visible: 0 };
-let entranceProgress = { progress: 0, fieldReveal: 0, fieldHold: 0, surroundFade: 0, guide: 0, companionOpacity: 0, blackout: 0 };
+let entranceProgress = { progress: 0, fieldReveal: 0, inward: 0, particleFade: 0, guide: 0, blackout: 0 };
 
 function resizeCanvas() {
   if (!canvas || !ctx) return;
@@ -128,9 +119,9 @@ function createParticles(count = 154) {
   for (let i = 0; i < count; i += 1) {
     const sizeRoll = Math.random();
     let particleSize;
-    if (sizeRoll < 0.85) particleSize = 0.18 + Math.random() * 0.34;
-    else if (sizeRoll < 0.97) particleSize = 0.52 + Math.random() * 0.26;
-    else particleSize = 0.82 + Math.random() * 0.42;
+    if (sizeRoll < 0.85) particleSize = 0.38 + Math.random() * 0.34;
+    else if (sizeRoll < 0.97) particleSize = 0.72 + Math.random() * 0.30;
+    else particleSize = 1.02 + Math.random() * 0.40;
 
     const twinkleRoll = Math.random();
     const twinkleMode =
@@ -165,29 +156,28 @@ function createParticles(count = 154) {
 
 function updateRoomProgress() {
   if (!roomSection) {
-    return { gather: 0, fade: 0, visible: 0, beyond: 0, copy: 0, release: 0, title: 0 };
+    return { fade: 0, visible: 0, beyond: 0, copy: 0, release: 0, title: 0 };
   }
-  const rect = roomSection.getBoundingClientRect();
 
-  const start = window.innerHeight * 1.02;
+  const rect = roomSection.getBoundingClientRect();
+  const start = window.innerHeight * 0.98;
   const end = -rect.height * 0.15;
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
-  // ROOM is revealed only after the guide light has disappeared.
-  const titleIn = clamp((progress - 0.09) / 0.16, 0, 1);
-  const titleHoldOut = clamp((progress - 0.72) / 0.16, 0, 1);
+  // The section begins as pure black. ROOM then becomes visible without moving.
+  const titleIn = clamp((progress - 0.115) / 0.15, 0, 1);
+  const titleHoldOut = clamp((progress - 0.89) / 0.08, 0, 1);
   const title = titleIn * (1 - titleHoldOut);
-  const copyIn = clamp((progress - 0.23) / 0.14, 0, 1);
+
+  // Supporting copy waits until ROOM has been fully established.
+  const copyIn = clamp((progress - 0.39) / 0.13, 0, 1);
   const release = titleHoldOut;
   const copy = copyIn * (1 - release);
-  const beyondIn = clamp((progress - 0.18) / 0.18, 0, 1);
-  const beyond = beyondIn * (1 - release * 0.92);
 
   return {
-    gather: 0,
     fade: release,
     visible: title,
-    beyond,
+    beyond: 0,
     copy,
     release,
     title
@@ -213,14 +203,16 @@ function drawParticles(time) {
   const fadeOut = roomProgress.fade;
   const ep = entranceProgress.progress || 0;
   const fieldReveal = entranceProgress.fieldReveal || 0;
-  const surroundFade = entranceProgress.surroundFade || 0;
+  const inward = entranceProgress.inward || 0;
+  const particleFade = entranceProgress.particleFade || 0;
+  const blackout = entranceProgress.blackout || 0;
   const entranceActive = ep > 0.02 && ep < 0.995;
 
   // Before passing the words: just two or three points.
   // Beyond the words: the hidden field opens from below.
-  const sparsePresence = clamp((ep - 0.27) / 0.06, 0, 1) *
-    (1 - clamp((ep - 0.49) / 0.09, 0, 1));
-  const openedPresence = fieldReveal * Math.pow(1 - surroundFade, 2.15);
+  const sparsePresence = clamp((ep - 0.18) / 0.05, 0, 1) *
+    (1 - clamp((ep - 0.31) / 0.08, 0, 1));
+  const openedPresence = fieldReveal * Math.pow(1 - particleFade, 1.75);
 
   const particlePresence = entranceActive
     ? clamp(sparsePresence * 0.045 + openedPresence, 0, 1)
@@ -242,12 +234,13 @@ function drawParticles(time) {
       (p.twinkleMode === "breath" ? Math.sin(p.phase) * 0.000035 : 0);
 
     if (fieldReveal > 0.01) {
-      // After the words are passed, the field becomes visible from below.
-      p.x += ((centerX / width) - p.x) * (0.00005 + fieldReveal * 0.00022);
-      p.y += ((centerY / height) - p.y) * (0.00004 + fieldReveal * 0.00018);
-    } else if (roomPull > 0.01) {
-      p.x += ((centerX / width) - p.x) * (0.00025 + roomPull * 0.00065);
-      p.y += ((centerY / height) - p.y) * (0.00020 + roomPull * 0.00055);
+      // Drift toward a ring around the entrance, never into a central clump.
+      const targetRadius = 0.055 + (idx % 11) * 0.006;
+      const angle = p.phase + idx * 0.37;
+      const targetX = 0.50 + Math.cos(angle) * targetRadius;
+      const targetY = 0.54 + Math.sin(angle) * targetRadius * 0.62;
+      p.x += (targetX - p.x) * (0.00004 + inward * 0.00125);
+      p.y += (targetY - p.y) * (0.00004 + inward * 0.00110);
     }
 
     // ROOM到達後は粒が外へはける。
@@ -290,27 +283,26 @@ function drawParticles(time) {
       Math.hypot((x - centerX) / (width * 0.55), (y - centerY) / (height * 0.52))
     );
     const localFade = clamp(
-      surroundFade * (0.68 + centerDistance * 0.62),
+      particleFade * (0.72 + (1 - centerDistance) * 0.42),
       0,
       1
     );
 
+    const roomIsActive = roomProgress.title > 0 || roomProgress.copy > 0 || roomProgress.release > 0;
+    const thresholdSuppression = entranceProgress.progress > 0.78 ? 0 : 1;
     const alpha = entranceActive
-      ? (0.12 + openedPresence * 0.48) * twinkle * Math.pow(1 - localFade, 1.72)
-      : particlePresence * 0.34 * twinkle * Math.pow(1 - fadeOut, 1.45);
+      ? (0.17 + openedPresence * 0.56) * twinkle * Math.pow(1 - localFade, 2.1) * (1 - blackout)
+      : particlePresence * 0.34 * twinkle * Math.pow(1 - fadeOut, 1.45) *
+        thresholdSuppression * (roomIsActive ? 0 : 1);
     const radius = p.size * (0.76 + spatialOpen * 0.18);
 
     ctx.beginPath();
     ctx.fillStyle = p.warm
       ? `rgba(250, 247, 239, ${alpha * 0.86})`
       : `rgba(239, 243, 250, ${alpha})`;
-    ctx.shadowBlur = radius > 0.72 ? 1.5 + radius * 0.9 : 0.6;
-    ctx.shadowColor = p.warm
-      ? `rgba(245, 239, 225, ${0.05 + alpha * 0.28})`
-      : `rgba(222, 231, 246, ${0.05 + alpha * 0.30})`;
+    ctx.shadowBlur = 0;
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
-    ctx.shadowBlur = 0;
   });
 
   animationFrameId = window.requestAnimationFrame(drawParticles);
@@ -325,7 +317,7 @@ function update() {
   document.documentElement.style.setProperty('--room-copy', (roomProgress.copy || 0).toFixed(3));
   document.documentElement.style.setProperty('--room-release', (roomProgress.release || 0).toFixed(3));
   document.documentElement.style.setProperty('--room-title-opacity', (roomProgress.title || 0).toFixed(3));
-  document.documentElement.style.setProperty('--room-title-y', ((1 - (roomProgress.title || 0)) * 10).toFixed(3));
+  document.documentElement.style.setProperty('--room-title-y', '0');
 }
 
 window.addEventListener('scroll', update, { passive: true });
