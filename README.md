@@ -1,11 +1,14 @@
-# ROOM v46 — Particle Timing & Cleanup
+# ROOM v47 — pacing and content holds
 
-- light-transition: 300vh
-- particle field and guide light begin earlier
-- particle fade completes at progress 0.935, before blackout at 0.915 visually takes over
-- removed obsolete ROOM/guide CSS variables and JS writes
-- simplified updateRoomProgress() return object
-- merged duplicate Founder’s Note CSS
-- removed unnecessary ROOM !important override
-- restored a restrained hero scroll cue
-- ticket-section unchanged
+- ROOM appears by opacity and blur resolution only; no movement, scale, or glow
+- ROOM and its supporting copy fully disappear before the Ticket section
+- Statement lines share one exact center axis
+- Text fragments after each photo use sticky holds with gentle scroll-linked drift
+- Light transition duration doubled from 300vh to 600vh
+- Ticket section left unchanged
+
+## v48 timing clarification
+- The central guide light keeps its current shape and size
+- Its hold time is extended until progress 0.915
+- It fades from 0.915 to 0.945
+- The blackout is shortened and moved to 0.942–0.990 so ROOM follows sooner

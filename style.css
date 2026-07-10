@@ -6,6 +6,8 @@
   --muted: #ABABAB;
   --body: #E6E6E6;
   --light-progress: 0;
+  --room-title: 0;
+  --room-blur: 6px;
   --room-copy: 0;
   --entrance-copy: 0;
   --guide-opacity: 0;
@@ -217,9 +219,10 @@ a { color: inherit; }
 
 .statement span {
   display: block;
-  width: max-content;
+  width: 100%;
   max-width: 100%;
   margin-inline: auto;
+  padding-left: 0.04em;
   text-align: center;
   opacity: 0;
   transform: translateY(12px);
@@ -270,20 +273,25 @@ a { color: inherit; }
 }
 
 .fragment {
-  min-height: 118vh;
-  display: grid;
-  place-items: center;
+  min-height: 178vh;
+  display: block;
   padding: 0 7%;
   text-align: center;
 }
 .fragment p {
-  margin: 0;
+  position: sticky;
+  top: 39vh;
+  width: min(92vw, 820px);
+  margin: 0 auto;
   color: var(--text);
   font-family: "IBM Plex Sans JP", system-ui, sans-serif;
   font-size: clamp(1.35rem, 3vw, 2.15rem);
   font-weight: 300;
   line-height: 2.42;
   letter-spacing: 0.052em;
+  opacity: calc(0.18 + var(--fragment-presence, 0) * 0.82);
+  transform: translateY(calc(16px - var(--fragment-progress, 0) * 42px));
+  will-change: opacity, transform;
 }
 
 .founders-note {
@@ -320,7 +328,7 @@ a { color: inherit; }
 }
 
 .light-transition {
-  min-height: 300vh;
+  min-height: 600vh;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -409,10 +417,11 @@ a { color: inherit; }
   line-height: 1;
   letter-spacing: 0.18em;
   padding-left: 0.18em;
-  opacity: 1;
+  opacity: var(--room-title, 0);
   transform: none;
   text-shadow: none;
-  filter: none;
+  filter: blur(var(--room-blur, 6px));
+  will-change: opacity, filter;
 }
 
 .room-copy {
@@ -424,6 +433,7 @@ a { color: inherit; }
   line-height: 1.9;
   letter-spacing: 0.10em;
   opacity: var(--room-copy, 0);
+  will-change: opacity;
   transform: none;
 }
 
@@ -549,6 +559,8 @@ a { color: inherit; }
   html { scroll-behavior: auto; }
   .hero-logo, .hero-tagline, .scroll-line, .reveal { animation: none; transition: none; opacity: 1; transform: none; }
   .fixed-ticket { transition: none; }
+  .room-title { opacity: 1; filter: none; }
+  .fragment p { opacity: 1; transform: none; }
   .ticket-frame::before, .ticket-frame::after { animation:none; opacity:0; }
 }
 

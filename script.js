@@ -3,6 +3,7 @@ const fixedTicket = document.querySelector('.fixed-ticket');
 const lightTransition = document.querySelector('.light-transition');
 const roomSection = document.querySelector('#room');
 const foundersNote = document.querySelector('.founders-note');
+const fragmentSections = Array.from(document.querySelectorAll('.fragment'));
 const canvas = document.querySelector('.particle-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -68,14 +69,14 @@ function updateLightTransition() {
 
   // The final viewer light remains alone, recedes, then disappears completely.
   const guideIn = clamp((progress - 0.47) / 0.055, 0, 1);
-  const guideOut = clamp((progress - 0.89) / 0.045, 0, 1);
+  const guideOut = clamp((progress - 0.915) / 0.030, 0, 1);
   const guideOpacity = guideIn * (1 - guideOut);
   const guideScale = 1 - guideOut * 0.82;
   const guideY = 54.5 - guideOut * 1.2;
 
   // Pure black only during the handoff. It must clear again before ROOM.
-  const blackoutIn = clamp((progress - 0.915) / 0.025, 0, 1);
-  const blackoutOut = clamp((progress - 0.958) / 0.025, 0, 1);
+  const blackoutIn = clamp((progress - 0.942) / 0.018, 0, 1);
+  const blackoutOut = clamp((progress - 0.972) / 0.018, 0, 1);
   const blackout = blackoutIn * (1 - blackoutOut);
 
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
@@ -104,7 +105,7 @@ let width = 0;
 let height = 0;
 let animationFrameId = null;
 let globalProgress = 0;
-let roomProgress = { title: 0, copy: 0 };
+let roomProgress = { title: 0, blur: 6, copy: 0 };
 let entranceProgress = { progress: 0, fieldReveal: 0, inward: 0, particleFade: 0, guide: 0, blackout: 0 };
 
 function resizeCanvas() {
@@ -161,7 +162,7 @@ function createParticles(count = 154) {
 
 function updateRoomProgress() {
   if (!roomSection) {
-    return { title: 0, copy: 0 };
+    return { title: 0, blur: 6, copy: 0 };
   }
 
   const rect = roomSection.getBoundingClientRect();
@@ -169,16 +170,18 @@ function updateRoomProgress() {
   const end = -rect.height * 0.15;
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
-  // The section begins as pure black. ROOM then becomes visible without moving.
-  const titleIn = clamp((progress - 0.035) / 0.13, 0, 1);
-  const titleHoldOut = clamp((progress - 0.89) / 0.08, 0, 1);
-  const title = titleIn * (1 - titleHoldOut);
+  // ROOM does not move or scale. Its outline quietly resolves from darkness.
+  const titleIn = clamp((progress - 0.075) / 0.19, 0, 1);
+  const titleOut = clamp((progress - 0.72) / 0.12, 0, 1);
+  const title = titleIn * (1 - titleOut);
+  const blur = 6 * (1 - titleIn) + 1.2 * titleOut;
 
-  // Supporting copy waits until ROOM has been fully established.
-  const copyIn = clamp((progress - 0.32) / 0.13, 0, 1);
-  const copy = copyIn * (1 - titleHoldOut);
+  // Supporting copy enters after ROOM settles and leaves before Ticket begins.
+  const copyIn = clamp((progress - 0.30) / 0.13, 0, 1);
+  const copyOut = clamp((progress - 0.66) / 0.12, 0, 1);
+  const copy = copyIn * (1 - copyOut);
 
-  return { title, copy };
+  return { title, blur, copy };
 }
 
 function updateFoundersProgress() {
@@ -188,6 +191,19 @@ function updateFoundersProgress() {
   const progress = clamp(-rect.top / travel, 0, 1);
   document.documentElement.style.setProperty('--founder-progress', progress.toFixed(3));
   return progress;
+}
+
+function updateFragmentsProgress() {
+  fragmentSections.forEach((section) => {
+    const rect = section.getBoundingClientRect();
+    const travel = Math.max(rect.height - window.innerHeight, 1);
+    const progress = clamp(-rect.top / travel, 0, 1);
+    const enter = clamp((window.innerHeight * 0.82 - rect.top) / (window.innerHeight * 0.32), 0, 1);
+    const exit = clamp((-rect.bottom + window.innerHeight * 0.22) / (window.innerHeight * 0.24), 0, 1);
+    const presence = enter * (1 - exit);
+    section.style.setProperty('--fragment-progress', progress.toFixed(3));
+    section.style.setProperty('--fragment-presence', presence.toFixed(3));
+  });
 }
 
 function updateGlobalProgress() {
@@ -275,9 +291,12 @@ function drawParticles(time) {
 function update() {
   updateFixedTicket();
   updateFoundersProgress();
+  updateFragmentsProgress();
   entranceProgress = updateLightTransition();
   globalProgress = updateGlobalProgress();
   roomProgress = updateRoomProgress();
+  document.documentElement.style.setProperty('--room-title', (roomProgress.title || 0).toFixed(3));
+  document.documentElement.style.setProperty('--room-blur', `${Math.max(0, roomProgress.blur || 0).toFixed(2)}px`);
   document.documentElement.style.setProperty('--room-copy', (roomProgress.copy || 0).toFixed(3));
 }
 
