@@ -3,7 +3,9 @@ const fixedTicket = document.querySelector('.fixed-ticket');
 const lightTransition = document.querySelector('.light-transition');
 const roomSection = document.querySelector('#room');
 const foundersNote = document.querySelector('.founders-note');
-const fragmentSections = Array.from(document.querySelectorAll('.fragment'));
+const stickyCopySections = Array.from(document.querySelectorAll('.sticky-copy'));
+const visualStories = Array.from(document.querySelectorAll('.visual-story'));
+const blackoutLayer = document.querySelector('.room-blackout');
 const canvas = document.querySelector('.particle-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -38,64 +40,36 @@ function updateFixedTicket() {
 }
 
 function updateLightTransition() {
-  if (!lightTransition) {
-    return {
-      progress: 0,
-      fieldReveal: 0,
-      inward: 0,
-      particleFade: 0,
-      guide: 0,
-      blackout: 0
-    };
-  }
-
+  if (!lightTransition) return { progress: 0, fieldReveal: 0, inward: 0, particleFade: 0, guide: 0, blackout: 0 };
   const rect = lightTransition.getBoundingClientRect();
-  const start = window.innerHeight * 0.98;
-  const end = -rect.height * 0.09;
-  const progress = clamp((start - rect.top) / (start - end), 0, 1);
-
-  // The entrance copy finishes its role early, before the light starts moving.
-  const copyIn = clamp((progress - 0.035) / 0.085, 0, 1);
-  const copyOut = clamp((progress - 0.245) / 0.085, 0, 1);
+  const travel = Math.max(rect.height - window.innerHeight, 1);
+  const progress = clamp(-rect.top / travel, 0, 1);
+  const copyIn = clamp((progress - 0.02) / 0.08, 0, 1);
+  const copyOut = clamp((progress - 0.22) / 0.10, 0, 1);
   const entranceCopy = copyIn * (1 - copyOut);
-  const entranceCopyRise = copyOut * 8;
-
-  // The field opens after the copy has mostly disappeared.
-  const fieldReveal = clamp((progress - 0.50) / 0.20, 0, 1);
-
-  // Particles move toward the entrance but disappear before forming a cluster.
-  const inward = clamp((progress - 0.70) / 0.20, 0, 1);
-  const particleFade = clamp((progress - 0.86) / 0.075, 0, 1);
-
-  // The final viewer light remains alone, recedes, then disappears completely.
-  const guideIn = clamp((progress - 0.47) / 0.055, 0, 1);
-  const guideOut = clamp((progress - 0.915) / 0.030, 0, 1);
+  const entranceCopyRise = copyOut * 9;
+  const fieldReveal = clamp((progress - 0.34) / 0.22, 0, 1);
+  const inward = clamp((progress - 0.58) / 0.23, 0, 1);
+  const particleFade = clamp((progress - 0.72) / 0.18, 0, 1);
+  const guideIn = clamp((progress - 0.39) / 0.08, 0, 1);
+  const guideOut = clamp((progress - 0.895) / 0.045, 0, 1);
   const guideOpacity = guideIn * (1 - guideOut);
-  const guideScale = 1 - guideOut * 0.82;
-  const guideY = 54.5 - guideOut * 1.2;
-
-  // Pure black only during the handoff. It must clear again before ROOM.
-  const blackoutIn = clamp((progress - 0.942) / 0.018, 0, 1);
-  const blackoutOut = clamp((progress - 0.972) / 0.018, 0, 1);
+  const guideScale = 1 - guideOut * 0.78;
+  const guideY = 54.5 - guideOut * 0.8;
+  const blackoutIn = clamp((progress - 0.925) / 0.025, 0, 1);
+  const blackoutOut = clamp((progress - 0.965) / 0.025, 0, 1);
   const blackout = blackoutIn * (1 - blackoutOut);
-
-  document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
-  document.documentElement.style.setProperty('--entrance-copy', entranceCopy.toFixed(3));
-  document.documentElement.style.setProperty('--entrance-copy-rise', entranceCopyRise.toFixed(3));
-  document.documentElement.style.setProperty('--field-reveal', fieldReveal.toFixed(3));
-  document.documentElement.style.setProperty('--guide-opacity', guideOpacity.toFixed(3));
-  document.documentElement.style.setProperty('--guide-y', guideY.toFixed(3));
-  document.documentElement.style.setProperty('--guide-scale', Math.max(0.12, guideScale).toFixed(3));
-  document.documentElement.style.setProperty('--blackout-opacity', blackout.toFixed(3));
-
-  return {
-    progress,
-    fieldReveal,
-    inward,
-    particleFade,
-    guide: guideOpacity,
-    blackout
-  };
+  const root = document.documentElement.style;
+  root.setProperty('--light-progress', progress.toFixed(3));
+  root.setProperty('--entrance-copy', entranceCopy.toFixed(3));
+  root.setProperty('--entrance-copy-rise', entranceCopyRise.toFixed(3));
+  root.setProperty('--field-reveal', fieldReveal.toFixed(3));
+  root.setProperty('--guide-opacity', guideOpacity.toFixed(3));
+  root.setProperty('--guide-y', guideY.toFixed(3));
+  root.setProperty('--guide-scale', Math.max(0.12, guideScale).toFixed(3));
+  root.setProperty('--blackout-opacity', blackout.toFixed(3));
+  blackoutLayer?.classList.toggle('is-active', blackout > 0.002);
+  return { progress, fieldReveal, inward, particleFade, guide: guideOpacity, blackout };
 }
 
 // Particles
@@ -161,50 +135,66 @@ function createParticles(count = 154) {
 }
 
 function updateRoomProgress() {
-  if (!roomSection) {
-    return { title: 0, blur: 6, copy: 0 };
-  }
-
+  if (!roomSection) return { title: 0, blur: 6, copy: 0 };
   const rect = roomSection.getBoundingClientRect();
-  const start = window.innerHeight * 0.98;
-  const end = -rect.height * 0.15;
-  const progress = clamp((start - rect.top) / (start - end), 0, 1);
-
-  // ROOM does not move or scale. Its outline quietly resolves from darkness.
-  const titleIn = clamp((progress - 0.075) / 0.19, 0, 1);
-  const titleOut = clamp((progress - 0.72) / 0.12, 0, 1);
+  const start = window.innerHeight * 0.95;
+  const travel = Math.max(rect.height - window.innerHeight * 0.05, 1);
+  const progress = clamp((start - rect.top) / travel, 0, 1);
+  const titleIn = clamp(progress / 0.14, 0, 1);
+  const titleOut = clamp((progress - 0.70) / 0.13, 0, 1);
   const title = titleIn * (1 - titleOut);
-  const blur = 6 * (1 - titleIn) + 1.2 * titleOut;
-
-  // Supporting copy enters after ROOM settles and leaves before Ticket begins.
-  const copyIn = clamp((progress - 0.30) / 0.13, 0, 1);
-  const copyOut = clamp((progress - 0.66) / 0.12, 0, 1);
+  const blur = 6 * (1 - titleIn) + 1.5 * titleOut;
+  const copyIn = clamp((progress - 0.25) / 0.14, 0, 1);
+  const copyOut = clamp((progress - 0.63) / 0.12, 0, 1);
   const copy = copyIn * (1 - copyOut);
-
   return { title, blur, copy };
 }
+
+
 
 function updateFoundersProgress() {
   if (!foundersNote) return 0;
   const rect = foundersNote.getBoundingClientRect();
   const travel = Math.max(rect.height - window.innerHeight, 1);
   const progress = clamp(-rect.top / travel, 0, 1);
-  document.documentElement.style.setProperty('--founder-progress', progress.toFixed(3));
+  const enter = clamp(progress / 0.18, 0, 1);
+  const exit = clamp((progress - 0.82) / 0.18, 0, 1);
+  const presence = enter * (1 - exit);
+  const root = document.documentElement.style;
+  root.setProperty('--founder-progress', progress.toFixed(3));
+  root.setProperty('--founder-presence', presence.toFixed(3));
   return progress;
 }
 
-function updateFragmentsProgress() {
-  fragmentSections.forEach((section) => {
+
+
+function updateScrollScenes() {
+  stickyCopySections.forEach((section) => {
     const rect = section.getBoundingClientRect();
     const travel = Math.max(rect.height - window.innerHeight, 1);
     const progress = clamp(-rect.top / travel, 0, 1);
-    const enter = clamp((window.innerHeight * 0.82 - rect.top) / (window.innerHeight * 0.32), 0, 1);
-    const exit = clamp((-rect.bottom + window.innerHeight * 0.22) / (window.innerHeight * 0.24), 0, 1);
-    const presence = enter * (1 - exit);
-    section.style.setProperty('--fragment-progress', progress.toFixed(3));
-    section.style.setProperty('--fragment-presence', presence.toFixed(3));
+    const enter = clamp(progress / 0.16, 0, 1);
+    const exit = clamp((progress - 0.82) / 0.18, 0, 1);
+    section.style.setProperty('--copy-progress', progress.toFixed(3));
+    section.style.setProperty('--copy-presence', (enter * (1 - exit)).toFixed(3));
+  });
+  visualStories.forEach((story) => {
+    const rect = story.getBoundingClientRect();
+    const travel = Math.max(rect.height - window.innerHeight, 1);
+    const progress = clamp(-rect.top / travel, 0, 1);
+    const photoFade = clamp((progress - 0.34) / 0.18, 0, 1);
+    const photoOpacity = 1 - photoFade;
+    const textIn = clamp((progress - 0.50) / 0.18, 0, 1);
+    const textOut = clamp((progress - 0.88) / 0.12, 0, 1);
+    const textPresence = textIn * (1 - textOut);
+    const textProgress = clamp((progress - 0.50) / 0.50, 0, 1);
+    story.style.setProperty('--photo-opacity', photoOpacity.toFixed(3));
+    story.style.setProperty('--text-presence', textPresence.toFixed(3));
+    story.style.setProperty('--text-progress', textProgress.toFixed(3));
   });
 }
+
+
 
 function updateGlobalProgress() {
   const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
@@ -254,7 +244,8 @@ function drawParticles(time) {
     const originX = p.x * width + driftX;
     const originY = p.y * height + driftY;
 
-    const targetRadius = width * (0.052 + (idx % 11) * 0.0055);
+    const spread = width < 760 ? 1.58 : 1;
+    const targetRadius = width * (0.052 + (idx % 11) * 0.0055) * spread;
     const angle = p.phase + idx * 0.37;
     const targetX = centerX + Math.cos(angle) * targetRadius;
     const targetY = centerY + Math.sin(angle) * targetRadius * 0.58;
@@ -291,7 +282,7 @@ function drawParticles(time) {
 function update() {
   updateFixedTicket();
   updateFoundersProgress();
-  updateFragmentsProgress();
+  updateScrollScenes();
   entranceProgress = updateLightTransition();
   globalProgress = updateGlobalProgress();
   roomProgress = updateRoomProgress();

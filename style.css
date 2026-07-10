@@ -594,3 +594,128 @@ a { color: inherit; }
 
 
 .ticket-button.is-disabled { cursor: default; opacity: .72; pointer-events: none; }
+
+
+/* v50: unified scroll scenes. These rules intentionally supersede v49's
+   independent reveal/transition controls. */
+.sticky-copy {
+  position: relative;
+  display: block;
+  padding: 0 7%;
+  text-align: center;
+}
+.question.sticky-copy { min-height: 170vh; }
+.statement.sticky-copy { min-height: 190vh; }
+.sticky-copy-stage {
+  position: sticky;
+  top: 10vh;
+  height: 80vh;
+  display: grid;
+  place-items: center;
+}
+.sticky-copy-motion {
+  margin: 0;
+  opacity: var(--copy-presence, 0);
+  transform: translateY(calc(14px - var(--copy-progress, 0) * 38px));
+  will-change: opacity, transform;
+}
+.question .sticky-copy-motion,
+.statement .sticky-copy-motion { width: min(92vw, 860px); }
+.question span,
+.statement span {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.visual-story {
+  position: relative;
+  min-height: 300vh;
+  --photo-opacity: 1;
+  --text-presence: 0;
+  --text-progress: 0;
+}
+.visual-story .visual {
+  position: absolute;
+  inset: 0 0 auto;
+  min-height: 188vh;
+  padding: 0;
+  display: block;
+}
+.visual-stage {
+  position: sticky;
+  top: 5vh;
+  height: 90vh;
+  display: grid;
+  place-items: center;
+  opacity: var(--photo-opacity);
+  will-change: opacity;
+}
+.visual-story .visual img {
+  width: min(95vw, 1540px);
+  max-height: 88vh;
+  aspect-ratio: 4 / 3;
+}
+.visual-story .fragment {
+  position: relative;
+  min-height: 300vh;
+  padding: 0 7%;
+}
+.visual-story .fragment p {
+  top: 36vh;
+  opacity: var(--text-presence);
+  transform: translateY(calc(14px - var(--text-progress) * 36px));
+}
+
+.founders-note { min-height: 190vh; }
+.founders-stage {
+  top: 10vh;
+  height: 80vh;
+  align-self: start;
+}
+.founders-motion {
+  opacity: var(--founder-presence, 0);
+  transform: translateY(calc(14px - var(--founder-progress, 0) * 40px));
+  will-change: opacity, transform;
+}
+
+.light-transition {
+  min-height: 520vh;
+  overflow: visible;
+  display: block;
+  padding: 0 7%;
+}
+.entrance-copy {
+  top: 34vh;
+}
+.room-section {
+  min-height: 260vh;
+  overflow: visible;
+  padding: 0 7%;
+}
+.room-stage {
+  top: 10vh;
+  height: 80vh;
+  place-content: center;
+}
+.room-blackout { visibility: hidden; }
+.room-blackout.is-active { visibility: visible; }
+
+@media (max-width: 760px) {
+  .question.sticky-copy { min-height: 165vh; }
+  .statement.sticky-copy { min-height: 185vh; }
+  .sticky-copy-stage, .founders-stage, .room-stage { top: 8vh; height: 84vh; }
+  .visual-story { min-height: 285vh; }
+  .visual-story .visual { min-height: 180vh; }
+  .visual-stage { top: 7vh; height: 86vh; }
+  .visual-story .fragment { min-height: 285vh; }
+  .visual-story .fragment p { top: 35vh; }
+  .light-transition { min-height: 500vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-copy-motion, .founders-motion, .visual-story .fragment p { opacity: 1; transform: none; }
+  .visual-stage { opacity: 1; }
+}
+
+.room-section { display: block; }
