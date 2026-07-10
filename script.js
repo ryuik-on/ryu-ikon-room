@@ -2,6 +2,7 @@ const revealElements = document.querySelectorAll('.reveal');
 const fixedTicket = document.querySelector('.fixed-ticket');
 const lightTransition = document.querySelector('.light-transition');
 const roomSection = document.querySelector('#room');
+const roomTitle = document.querySelector('.room-title');
 const canvas = document.querySelector('.particle-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -58,22 +59,22 @@ function updateLightTransition() {
   const entranceCopyRise = copyOut * 8;
 
   // The field opens after the copy has mostly disappeared.
-  const fieldReveal = clamp((progress - 0.205) / 0.22, 0, 1);
+  const fieldReveal = clamp((progress - 0.335) / 0.205, 0, 1);
 
   // Particles move toward the entrance but disappear before forming a cluster.
-  const inward = clamp((progress - 0.43) / 0.31, 0, 1);
-  const particleFade = clamp((progress - 0.61) / 0.19, 0, 1);
+  const inward = clamp((progress - 0.535) / 0.285, 0, 1);
+  const particleFade = clamp((progress - 0.69) / 0.16, 0, 1);
 
   // The final viewer light remains alone, recedes, then disappears completely.
-  const guideIn = clamp((progress - 0.57) / 0.08, 0, 1);
-  const guideOut = clamp((progress - 0.78) / 0.105, 0, 1);
+  const guideIn = clamp((progress - 0.285) / 0.055, 0, 1);
+  const guideOut = clamp((progress - 0.80) / 0.085, 0, 1);
   const guideOpacity = guideIn * (1 - guideOut);
   const guideScale = 1 - guideOut * 0.82;
   const guideY = 54.5 - guideOut * 1.2;
 
   // Pure black only during the handoff. It must clear again before ROOM.
-  const blackoutIn = clamp((progress - 0.875) / 0.045, 0, 1);
-  const blackoutOut = clamp((progress - 0.955) / 0.035, 0, 1);
+  const blackoutIn = clamp((progress - 0.885) / 0.04, 0, 1);
+  const blackoutOut = clamp((progress - 0.958) / 0.032, 0, 1);
   const blackout = blackoutIn * (1 - blackoutOut);
 
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
@@ -216,8 +217,8 @@ function drawParticles(time) {
     return;
   }
 
-  const sparsePresence = clamp((ep - 0.18) / 0.05, 0, 1) *
-    (1 - clamp((ep - 0.31) / 0.08, 0, 1));
+  const sparsePresence = clamp((ep - 0.285) / 0.035, 0, 1) *
+    (1 - clamp((ep - 0.355) / 0.055, 0, 1));
   const openedPresence = fieldReveal * Math.pow(1 - particleFade, 1.7);
   const visibleRatio = clamp(sparsePresence * 0.04 + openedPresence, 0, 1);
   const visibleCount = Math.max(sparsePresence > 0.02 ? 3 : 0,
@@ -280,8 +281,14 @@ function update() {
   document.documentElement.style.setProperty('--room-beyond', (roomProgress.beyond || 0).toFixed(3));
   document.documentElement.style.setProperty('--room-copy', (roomProgress.copy || 0).toFixed(3));
   document.documentElement.style.setProperty('--room-release', (roomProgress.release || 0).toFixed(3));
-  document.documentElement.style.setProperty('--room-title-opacity', (roomProgress.title || 0).toFixed(3));
+  const roomTitleOpacity = Number.isFinite(roomProgress.title) ? roomProgress.title : 1;
+  document.documentElement.style.setProperty('--room-title-opacity', roomTitleOpacity.toFixed(3));
   document.documentElement.style.setProperty('--room-title-y', '0');
+  if (roomTitle) {
+    roomTitle.style.display = 'block';
+    roomTitle.style.visibility = 'visible';
+    roomTitle.style.opacity = String(roomTitleOpacity);
+  }
 }
 
 window.addEventListener('scroll', update, { passive: true });
