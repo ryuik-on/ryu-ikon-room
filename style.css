@@ -300,6 +300,8 @@ a { color: inherit; }
   padding: 0 7%;
   display: block;
   text-align: center;
+  overflow: visible;
+  transform: none;
 }
 .section-kicker {
   margin: 0 0 2.8rem;
@@ -577,11 +579,15 @@ a { color: inherit; }
 .founders-stage {
   position: sticky;
   top: 10vh;
-  min-height: 80vh;
+  height: 80vh;
   display: grid;
-  align-content: center;
-  justify-items: center;
+  place-items: center;
   padding: 7vh 0;
+}
+
+.founders-motion {
+  width: 100%;
+  text-align: center;
   transform: translateY(calc(12px - var(--founder-progress, 0) * 44px));
   will-change: transform;
 }
