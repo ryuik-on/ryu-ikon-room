@@ -1,11 +1,7 @@
-# ROOM v38 — Dark ROOM Transition
+# ROOM v40 — scroll sync + later-content fix
 
-- 入口コピーを早めに退場
-- コピー消失後に光の移動を開始
-- 光は一点収束せず、中央手前で順番に消える
-- ROOM区間へ粒子を持ち越さない
-- 最後の一粒が消えたあと、完全な黒を確保
-- ROOMは移動・拡大・発光なし
-- ROOMは暗闇から不透明度だけで現れる
-- ROOMを大型化
-- ROOM背後のグラデーションを削除
+- 粒子位置をスクロール進行率から直接計算
+- 高速スクロール時の追従遅れを解消
+- ROOM以降をIntersectionObserver非依存化
+- 黒レイヤーを入口終了時にdisplay:none
+- ROOM / 日付 / Ticket / Instagramを常時描画可能に修正

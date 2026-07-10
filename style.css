@@ -96,7 +96,14 @@ a { color: inherit; }
   opacity: var(--blackout-opacity);
   pointer-events: none;
   will-change: opacity;
+  visibility: visible;
 }
+
+html[data-transition-complete="true"] .room-blackout {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+
 
 .site-main, .fixed-ticket { position: relative; z-index: 2; }
 
@@ -647,4 +654,23 @@ a { color: inherit; }
     letter-spacing: 0.12em;
     padding-left: 0.12em;
   }
+}
+
+
+/* v40: later sections must never depend on reveal observer */
+.room-section,
+.ticket-bridge,
+.creator-signature,
+.ticket-section,
+.footer {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.room-blackout {
+  display: block;
+}
+html[data-transition-complete="true"] .room-blackout {
+  display: none !important;
 }
