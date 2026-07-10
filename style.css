@@ -331,7 +331,7 @@ html[data-transition-complete="true"] .room-blackout {
 }
 
 .light-transition {
-  min-height: 290vh;
+  min-height: 380vh;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -683,3 +683,35 @@ html[data-transition-complete="true"] .room-blackout {
   opacity: var(--room-title-opacity, 1);
 }
 .room-section .room-title { opacity: var(--room-title-opacity, 1); }
+
+/* v42: keep the completed Founder's Note in view instead of letting it pass immediately. */
+.founders-note {
+  position: relative;
+  min-height: 290vh;
+  padding: 0 7%;
+  display: block;
+  text-align: center;
+}
+.founders-stage {
+  position: sticky;
+  top: 10vh;
+  min-height: 80vh;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 7vh 0;
+}
+
+/* v42: ROOM visibility is no longer controlled by a CSS variable or observer. */
+.room-title,
+.room-section .room-title,
+.room-section.is-visible .room-title {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: rgba(242,242,242,0.98) !important;
+}
+.room-stage {
+  opacity: 1 !important;
+  visibility: visible !important;
+}

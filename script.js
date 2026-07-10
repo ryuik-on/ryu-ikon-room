@@ -59,15 +59,15 @@ function updateLightTransition() {
   const entranceCopyRise = copyOut * 8;
 
   // The field opens after the copy has mostly disappeared.
-  const fieldReveal = clamp((progress - 0.335) / 0.205, 0, 1);
+  const fieldReveal = clamp((progress - 0.515) / 0.16, 0, 1);
 
   // Particles move toward the entrance but disappear before forming a cluster.
-  const inward = clamp((progress - 0.535) / 0.285, 0, 1);
-  const particleFade = clamp((progress - 0.69) / 0.16, 0, 1);
+  const inward = clamp((progress - 0.665) / 0.205, 0, 1);
+  const particleFade = clamp((progress - 0.79) / 0.105, 0, 1);
 
   // The final viewer light remains alone, recedes, then disappears completely.
-  const guideIn = clamp((progress - 0.285) / 0.055, 0, 1);
-  const guideOut = clamp((progress - 0.80) / 0.085, 0, 1);
+  const guideIn = clamp((progress - 0.485) / 0.05, 0, 1);
+  const guideOut = clamp((progress - 0.86) / 0.055, 0, 1);
   const guideOpacity = guideIn * (1 - guideOut);
   const guideScale = 1 - guideOut * 0.82;
   const guideY = 54.5 - guideOut * 1.2;
@@ -217,8 +217,8 @@ function drawParticles(time) {
     return;
   }
 
-  const sparsePresence = clamp((ep - 0.285) / 0.035, 0, 1) *
-    (1 - clamp((ep - 0.355) / 0.055, 0, 1));
+  const sparsePresence = clamp((ep - 0.485) / 0.035, 0, 1) *
+    (1 - clamp((ep - 0.555) / 0.055, 0, 1));
   const openedPresence = fieldReveal * Math.pow(1 - particleFade, 1.7);
   const visibleRatio = clamp(sparsePresence * 0.04 + openedPresence, 0, 1);
   const visibleCount = Math.max(sparsePresence > 0.02 ? 3 : 0,
@@ -281,13 +281,12 @@ function update() {
   document.documentElement.style.setProperty('--room-beyond', (roomProgress.beyond || 0).toFixed(3));
   document.documentElement.style.setProperty('--room-copy', (roomProgress.copy || 0).toFixed(3));
   document.documentElement.style.setProperty('--room-release', (roomProgress.release || 0).toFixed(3));
-  const roomTitleOpacity = Number.isFinite(roomProgress.title) ? roomProgress.title : 1;
-  document.documentElement.style.setProperty('--room-title-opacity', roomTitleOpacity.toFixed(3));
+  document.documentElement.style.setProperty('--room-title-opacity', '1');
   document.documentElement.style.setProperty('--room-title-y', '0');
   if (roomTitle) {
+    roomTitle.style.removeProperty('opacity');
     roomTitle.style.display = 'block';
     roomTitle.style.visibility = 'visible';
-    roomTitle.style.opacity = String(roomTitleOpacity);
   }
 }
 
