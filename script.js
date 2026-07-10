@@ -60,14 +60,14 @@ function updateLightTransition() {
   const entranceCopyRise = copyOut * 8;
 
   // The field opens after the copy has mostly disappeared.
-  const fieldReveal = clamp((progress - 0.565) / 0.18, 0, 1);
+  const fieldReveal = clamp((progress - 0.50) / 0.20, 0, 1);
 
   // Particles move toward the entrance but disappear before forming a cluster.
-  const inward = clamp((progress - 0.705) / 0.19, 0, 1);
-  const particleFade = clamp((progress - 0.82) / 0.105, 0, 1);
+  const inward = clamp((progress - 0.70) / 0.20, 0, 1);
+  const particleFade = clamp((progress - 0.86) / 0.075, 0, 1);
 
   // The final viewer light remains alone, recedes, then disappears completely.
-  const guideIn = clamp((progress - 0.535) / 0.055, 0, 1);
+  const guideIn = clamp((progress - 0.47) / 0.055, 0, 1);
   const guideOut = clamp((progress - 0.89) / 0.045, 0, 1);
   const guideOpacity = guideIn * (1 - guideOut);
   const guideScale = 1 - guideOut * 0.82;
@@ -81,13 +81,10 @@ function updateLightTransition() {
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
   document.documentElement.style.setProperty('--entrance-copy', entranceCopy.toFixed(3));
   document.documentElement.style.setProperty('--entrance-copy-rise', entranceCopyRise.toFixed(3));
-  document.documentElement.style.setProperty('--entrance-copy-secondary', '0');
   document.documentElement.style.setProperty('--field-reveal', fieldReveal.toFixed(3));
   document.documentElement.style.setProperty('--guide-opacity', guideOpacity.toFixed(3));
   document.documentElement.style.setProperty('--guide-y', guideY.toFixed(3));
   document.documentElement.style.setProperty('--guide-scale', Math.max(0.12, guideScale).toFixed(3));
-  document.documentElement.style.setProperty('--guide-stretch', '0');
-  document.documentElement.style.setProperty('--companion-opacity', '0');
   document.documentElement.style.setProperty('--blackout-opacity', blackout.toFixed(3));
 
   return {
@@ -107,7 +104,7 @@ let width = 0;
 let height = 0;
 let animationFrameId = null;
 let globalProgress = 0;
-let roomProgress = { gather: 0, fade: 0, visible: 0 };
+let roomProgress = { title: 0, copy: 0 };
 let entranceProgress = { progress: 0, fieldReveal: 0, inward: 0, particleFade: 0, guide: 0, blackout: 0 };
 
 function resizeCanvas() {
@@ -164,7 +161,7 @@ function createParticles(count = 154) {
 
 function updateRoomProgress() {
   if (!roomSection) {
-    return { fade: 0, visible: 0, beyond: 0, copy: 0, release: 0, title: 0 };
+    return { title: 0, copy: 0 };
   }
 
   const rect = roomSection.getBoundingClientRect();
@@ -179,17 +176,9 @@ function updateRoomProgress() {
 
   // Supporting copy waits until ROOM has been fully established.
   const copyIn = clamp((progress - 0.32) / 0.13, 0, 1);
-  const release = titleHoldOut;
-  const copy = copyIn * (1 - release);
+  const copy = copyIn * (1 - titleHoldOut);
 
-  return {
-    fade: release,
-    visible: title,
-    beyond: 0,
-    copy,
-    release,
-    title
-  };
+  return { title, copy };
 }
 
 function updateFoundersProgress() {
@@ -222,14 +211,14 @@ function drawParticles(time) {
   const blackout = entranceProgress.blackout || 0;
 
   // Once the entrance has ended, the canvas is guaranteed to be empty.
-  if (ep >= 0.90 || roomProgress.title > 0 || roomProgress.copy > 0) {
+  if (ep >= 0.94 || blackout > 0.001 || roomProgress.title > 0 || roomProgress.copy > 0) {
     animationFrameId = window.requestAnimationFrame(drawParticles);
     return;
   }
 
   const preEntrancePresence = ep < 0.12 ? clamp(globalProgress, 0, 0.08) : 0;
-  const sparsePresence = clamp((ep - 0.535) / 0.04, 0, 1) *
-    (1 - clamp((ep - 0.62) / 0.06, 0, 1));
+  const sparsePresence = clamp((ep - 0.47) / 0.04, 0, 1) *
+    (1 - clamp((ep - 0.56) / 0.06, 0, 1));
   const openedPresence = fieldReveal * Math.pow(1 - particleFade, 1.7);
   const visibleRatio = clamp(preEntrancePresence * 0.015 + sparsePresence * 0.04 + openedPresence, 0, 1);
   const earlyCount = preEntrancePresence > 0.01 ? 2 : 0;
