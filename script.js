@@ -2,6 +2,7 @@ const revealElements = document.querySelectorAll('.reveal');
 const fixedTicket = document.querySelector('.fixed-ticket');
 const lightTransition = document.querySelector('.light-transition');
 const roomSection = document.querySelector('#room');
+const foundersNote = document.querySelector('.founders-note');
 const canvas = document.querySelector('.particle-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -53,28 +54,28 @@ function updateLightTransition() {
   const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
   // The entrance copy finishes its role early, before the light starts moving.
-  const copyIn = clamp((progress - 0.025) / 0.075, 0, 1);
-  const copyOut = clamp((progress - 0.145) / 0.075, 0, 1);
+  const copyIn = clamp((progress - 0.035) / 0.085, 0, 1);
+  const copyOut = clamp((progress - 0.245) / 0.085, 0, 1);
   const entranceCopy = copyIn * (1 - copyOut);
   const entranceCopyRise = copyOut * 8;
 
   // The field opens after the copy has mostly disappeared.
-  const fieldReveal = clamp((progress - 0.515) / 0.16, 0, 1);
+  const fieldReveal = clamp((progress - 0.565) / 0.18, 0, 1);
 
   // Particles move toward the entrance but disappear before forming a cluster.
-  const inward = clamp((progress - 0.665) / 0.205, 0, 1);
-  const particleFade = clamp((progress - 0.79) / 0.105, 0, 1);
+  const inward = clamp((progress - 0.705) / 0.19, 0, 1);
+  const particleFade = clamp((progress - 0.82) / 0.105, 0, 1);
 
   // The final viewer light remains alone, recedes, then disappears completely.
-  const guideIn = clamp((progress - 0.485) / 0.05, 0, 1);
-  const guideOut = clamp((progress - 0.86) / 0.055, 0, 1);
+  const guideIn = clamp((progress - 0.535) / 0.055, 0, 1);
+  const guideOut = clamp((progress - 0.89) / 0.045, 0, 1);
   const guideOpacity = guideIn * (1 - guideOut);
   const guideScale = 1 - guideOut * 0.82;
   const guideY = 54.5 - guideOut * 1.2;
 
   // Pure black only during the handoff. It must clear again before ROOM.
-  const blackoutIn = clamp((progress - 0.885) / 0.04, 0, 1);
-  const blackoutOut = clamp((progress - 0.958) / 0.032, 0, 1);
+  const blackoutIn = clamp((progress - 0.915) / 0.025, 0, 1);
+  const blackoutOut = clamp((progress - 0.958) / 0.025, 0, 1);
   const blackout = blackoutIn * (1 - blackoutOut);
 
   document.documentElement.style.setProperty('--light-progress', progress.toFixed(3));
@@ -191,6 +192,15 @@ function updateRoomProgress() {
   };
 }
 
+function updateFoundersProgress() {
+  if (!foundersNote) return 0;
+  const rect = foundersNote.getBoundingClientRect();
+  const travel = Math.max(rect.height - window.innerHeight, 1);
+  const progress = clamp(-rect.top / travel, 0, 1);
+  document.documentElement.style.setProperty('--founder-progress', progress.toFixed(3));
+  return progress;
+}
+
 function updateGlobalProgress() {
   const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const raw = window.scrollY / maxScroll;
@@ -218,8 +228,8 @@ function drawParticles(time) {
   }
 
   const preEntrancePresence = ep < 0.12 ? clamp(globalProgress, 0, 0.08) : 0;
-  const sparsePresence = clamp((ep - 0.485) / 0.035, 0, 1) *
-    (1 - clamp((ep - 0.555) / 0.055, 0, 1));
+  const sparsePresence = clamp((ep - 0.535) / 0.04, 0, 1) *
+    (1 - clamp((ep - 0.62) / 0.06, 0, 1));
   const openedPresence = fieldReveal * Math.pow(1 - particleFade, 1.7);
   const visibleRatio = clamp(preEntrancePresence * 0.015 + sparsePresence * 0.04 + openedPresence, 0, 1);
   const earlyCount = preEntrancePresence > 0.01 ? 2 : 0;
@@ -275,6 +285,7 @@ function drawParticles(time) {
 }
 function update() {
   updateFixedTicket();
+  updateFoundersProgress();
   entranceProgress = updateLightTransition();
   globalProgress = updateGlobalProgress();
   roomProgress = updateRoomProgress();

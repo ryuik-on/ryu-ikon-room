@@ -292,11 +292,13 @@ a { color: inherit; }
 }
 
 .founders-note {
-  padding: 18vh 0 16vh;
+  position: relative;
+  min-height: 190vh;
+  padding: 0 7%;
   text-align: center;
 }
 .section-kicker {
-  margin: 0 0 3.6rem;
+  margin: 0 0 2.8rem;
   color: var(--muted);
   font-size: 0.72rem;
   letter-spacing: 0.28em;
@@ -307,14 +309,14 @@ a { color: inherit; }
   margin: 0 auto;
   color: var(--body);
   font-size: clamp(1rem, 1.6vw, 1.12rem);
-  line-height: 2.38;
+  line-height: 2.24;
   letter-spacing: 0.04em;
 }
 .note-body p {
-  margin: 0 0 3.8rem;
+  margin: 0 0 2.8rem;
 }
 .note-body p:last-child {
-  margin-top: 5.2rem;
+  margin-top: 3.8rem;
   color: var(--text);
 }
 .note-end {
@@ -322,7 +324,7 @@ a { color: inherit; }
 }
 
 .light-transition {
-  min-height: 380vh;
+  min-height: 255vh;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -432,44 +434,6 @@ a { color: inherit; }
 
 
 
-.ticket-bridge {
-  min-height: 250vh;
-  display: grid;
-  place-items: center;
-  padding: 18vh 7%;
-  text-align: center;
-}
-.ticket-bridge p {
-  margin: 0;
-  color: var(--text);
-  font-family: "IBM Plex Sans JP", system-ui, sans-serif;
-  font-size: clamp(1.85rem, 4vw, 2.85rem);
-  line-height: 1.9;
-  letter-spacing: 0.035em;
-}
-
-.creator-signature {
-  position: relative;
-  display: grid;
-  place-items: center;
-  padding-inline: 7%;
-  text-align: center;
-}
-.creator-signature {
-  min-height: 118vh;
-  align-content: center;
-  gap: 0.72rem;
-}
-.creator-signature p {
-  width: max-content;
-  max-width: 100%;
-  margin: 0 auto;
-  color: rgba(238,238,238,0.9);
-  font-family: "IBM Plex Sans JP", system-ui, sans-serif;
-  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
-  line-height: 1.6;
-  letter-spacing: 0.08em;
-}
 
 .ticket-section {
   min-height: 126vh;
@@ -549,20 +513,6 @@ a { color: inherit; }
 }
 
 @media (max-width: 760px) {
-  .ticket-bridge {
-    min-height: 132vh;
-    padding: 20vh 8%;
-  }
-  .ticket-bridge p {
-    font-size: clamp(1.48rem, 7vw, 1.9rem);
-  }
-  .creator-signature {
-    min-height: 122vh;
-    gap: 0.62rem;
-  }
-  .creator-signature p {
-    font-size: clamp(1.24rem, 5.8vw, 1.58rem);
-  }
   .ticket-section {
     min-height: 116vh;
     padding: 18vh 6% 18vh;
@@ -615,10 +565,10 @@ a { color: inherit; }
 }
 
 
-/* v42: keep the completed Founder's Note in view instead of letting it pass immediately. */
+/* v45: shorter note with a restrained scroll-linked drift. */
 .founders-note {
   position: relative;
-  min-height: 290vh;
+  min-height: 190vh;
   padding: 0 7%;
   display: block;
   text-align: center;
@@ -631,6 +581,8 @@ a { color: inherit; }
   align-content: center;
   justify-items: center;
   padding: 7vh 0;
+  transform: translateY(calc(12px - var(--founder-progress, 0) * 44px));
+  will-change: transform;
 }
 
 .room-title,

@@ -1,15 +1,11 @@
-# ROOM v43 cleanup
+# ROOM v45 — Rhythm Rebalance
 
-- ROOM copyをis-visible依存から分離
-- blackoutの強制非表示を削除し、JS曲線のみでフェード
-- 孤立したkeyframes断片を除去
-- globalProgressを粒子描画に接続
-- OGP URL/canonical/faviconを設定
-- ROOM表示ロジックをCSS固定、JSはcopy進行だけに整理
-- reduced-motion変更と非表示タブでのRAF停止に対応
-- チケットURL未確定のためボタンを一時的に無効化
-
-
-## v44 cleanup
-- Removed `.room-door`, `.light-bg`, and `.transition-core` from HTML/CSS.
-- Retained the configured GitHub Pages OGP/canonical URL: `https://ryuik-on.github.io/ryu-ikon-room/`.
+- Founder’s Noteを短文化
+- Founder’s Noteを290vhから190vhへ短縮
+- sticky中もスクロールに応じて約44pxゆっくり移動
+- 入口演出を380vhから255vhへ再構成
+- 光の開始を遅らせ、動いている時間を延長
+- 光消失後からROOMまでの黒い間を短縮
+- 「11月22日、この空間で。」を削除
+- 部名だけの独立セクションを削除
+- ROOMからTicketへ直接接続
