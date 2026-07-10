@@ -6,19 +6,14 @@
   --muted: #ABABAB;
   --body: #E6E6E6;
   --light-progress: 0;
-  --door-progress: 0;
-  --door-fade: 0;
-  --room-beyond: 0;
   --room-copy: 0;
   --entrance-copy: 0;
   --entrance-copy-secondary: 0;
-  --room-release: 0;
   --guide-opacity: 0;
   --guide-y: 54.5;
   --guide-scale: 1;
   --guide-stretch: 0;
   --blackout-opacity: 0;
-  --room-title-opacity: 0;
   --room-title-y: 10;
 }
 
@@ -99,10 +94,6 @@ a { color: inherit; }
   visibility: visible;
 }
 
-html[data-transition-complete="true"] .room-blackout {
-  opacity: 0 !important;
-  visibility: hidden;
-}
 
 
 .site-main, .fixed-ticket { position: relative; z-index: 2; }
@@ -337,24 +328,6 @@ html[data-transition-complete="true"] .room-blackout {
   place-items: center;
   padding: 0 7%;
 }
-.light-bg, .room-door {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.light-bg {
-  display: none;
-}
-.transition-core { display:none; }
-
-.room-door {
-  opacity: calc(var(--door-progress) * (1 - var(--door-fade)));
-}
-
-.room-door::before { display: none; }
-
-.room-door::after { display:none; }
-
 
 .entrance-copy {
   position: sticky;
@@ -438,11 +411,10 @@ html[data-transition-complete="true"] .room-blackout {
   line-height: 1;
   letter-spacing: 0.18em;
   padding-left: 0.18em;
-  opacity: var(--room-title-opacity);
+  opacity: 1;
   transform: none;
   text-shadow: none;
   filter: none;
-  transition: none;
 }
 
 .room-copy {
@@ -453,20 +425,11 @@ html[data-transition-complete="true"] .room-blackout {
   font-weight: 300;
   line-height: 1.9;
   letter-spacing: 0.10em;
-  opacity: 0;
-  transform: none;
-  transition: none;
-}
-
-.room-section.is-visible .room-title {
-  opacity: var(--room-title-opacity);
+  opacity: var(--room-copy, 0);
   transform: none;
 }
 
-.room-section.is-visible .room-copy {
-  opacity: calc(var(--room-title-opacity) * var(--room-copy));
-  transform: none;
-}
+
 
 
 .ticket-bridge {
@@ -585,11 +548,6 @@ html[data-transition-complete="true"] .room-blackout {
   border-bottom: 1px solid rgba(236,236,236,0.28);
 }
 
-  12%  { opacity: 0.72; }
-  74%  { opacity: 0.38; }
-  100% { opacity: 0; transform: rotate(360deg); }
-}
-
 @media (max-width: 760px) {
   .ticket-bridge {
     min-height: 132vh;
@@ -657,33 +615,6 @@ html[data-transition-complete="true"] .room-blackout {
 }
 
 
-/* v40: later sections must never depend on reveal observer */
-.room-section,
-.ticket-bridge,
-.creator-signature,
-.ticket-section,
-.footer {
-  opacity: 1 !important;
-  transform: none !important;
-  visibility: visible !important;
-}
-
-.room-blackout {
-  display: block;
-}
-html[data-transition-complete="true"] .room-blackout {
-  display: none !important;
-}
-
-/* v41 reliability fix: ROOM is never gated by reveal classes. */
-.room-stage { position: sticky; z-index: 6; }
-.room-title {
-  display: block !important;
-  visibility: visible !important;
-  opacity: var(--room-title-opacity, 1);
-}
-.room-section .room-title { opacity: var(--room-title-opacity, 1); }
-
 /* v42: keep the completed Founder's Note in view instead of letting it pass immediately. */
 .founders-note {
   position: relative;
@@ -702,16 +633,11 @@ html[data-transition-complete="true"] .room-blackout {
   padding: 7vh 0;
 }
 
-/* v42: ROOM visibility is no longer controlled by a CSS variable or observer. */
 .room-title,
 .room-section .room-title,
-.room-section.is-visible .room-title {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  color: rgba(242,242,242,0.98) !important;
-}
 .room-stage {
   opacity: 1 !important;
   visibility: visible !important;
 }
+
+.ticket-button.is-disabled { cursor: default; opacity: .72; pointer-events: none; }

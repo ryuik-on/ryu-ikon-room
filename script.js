@@ -2,10 +2,10 @@ const revealElements = document.querySelectorAll('.reveal');
 const fixedTicket = document.querySelector('.fixed-ticket');
 const lightTransition = document.querySelector('.light-transition');
 const roomSection = document.querySelector('#room');
-const roomTitle = document.querySelector('.room-title');
 const canvas = document.querySelector('.particle-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let prefersReducedMotion = motionQuery.matches;
 
 const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -217,11 +217,13 @@ function drawParticles(time) {
     return;
   }
 
+  const preEntrancePresence = ep < 0.12 ? clamp(globalProgress, 0, 0.08) : 0;
   const sparsePresence = clamp((ep - 0.485) / 0.035, 0, 1) *
     (1 - clamp((ep - 0.555) / 0.055, 0, 1));
   const openedPresence = fieldReveal * Math.pow(1 - particleFade, 1.7);
-  const visibleRatio = clamp(sparsePresence * 0.04 + openedPresence, 0, 1);
-  const visibleCount = Math.max(sparsePresence > 0.02 ? 3 : 0,
+  const visibleRatio = clamp(preEntrancePresence * 0.015 + sparsePresence * 0.04 + openedPresence, 0, 1);
+  const earlyCount = preEntrancePresence > 0.01 ? 2 : 0;
+  const visibleCount = Math.max(earlyCount, sparsePresence > 0.02 ? 3 : 0,
     Math.floor(particles.length * visibleRatio));
 
   const centerX = width * 0.50;
@@ -274,20 +276,9 @@ function drawParticles(time) {
 function update() {
   updateFixedTicket();
   entranceProgress = updateLightTransition();
-  document.documentElement.dataset.transitionComplete =
-    entranceProgress.progress >= 0.93 ? 'true' : 'false';
   globalProgress = updateGlobalProgress();
   roomProgress = updateRoomProgress();
-  document.documentElement.style.setProperty('--room-beyond', (roomProgress.beyond || 0).toFixed(3));
   document.documentElement.style.setProperty('--room-copy', (roomProgress.copy || 0).toFixed(3));
-  document.documentElement.style.setProperty('--room-release', (roomProgress.release || 0).toFixed(3));
-  document.documentElement.style.setProperty('--room-title-opacity', '1');
-  document.documentElement.style.setProperty('--room-title-y', '0');
-  if (roomTitle) {
-    roomTitle.style.removeProperty('opacity');
-    roomTitle.style.display = 'block';
-    roomTitle.style.visibility = 'visible';
-  }
 }
 
 window.addEventListener('scroll', update, { passive: true });
@@ -302,3 +293,28 @@ if (!prefersReducedMotion && ctx) {
 } else if (canvas) {
   canvas.remove();
 }
+
+
+function syncMotionPreference(event) {
+  prefersReducedMotion = event.matches;
+  if (prefersReducedMotion) {
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+    if (canvas) canvas.style.display = 'none';
+  } else if (canvas) {
+    canvas.style.display = '';
+    resizeCanvas();
+    if (!particles.length) createParticles(window.innerWidth < 760 ? 126 : 168);
+    if (!animationFrameId && !document.hidden) animationFrameId = requestAnimationFrame(drawParticles);
+  }
+}
+
+motionQuery.addEventListener?.('change', syncMotionPreference);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  } else if (!document.hidden && !prefersReducedMotion && ctx && !animationFrameId) {
+    animationFrameId = requestAnimationFrame(drawParticles);
+  }
+});

@@ -1,7 +1,15 @@
-# ROOM v42
+# ROOM v43 cleanup
 
-- ROOMをJS/CSS変数から切り離し、確実に常時描画
-- Founder’s Noteをsticky化し、全文が揃った状態を長くキープ
-- 入口セクションを延長
-- 入口コピー消失後から光開始までの間を大幅に延長
-- 最初の一粒・全体移動・消失タイミングも後ろへ移動
+- ROOM copyをis-visible依存から分離
+- blackoutの強制非表示を削除し、JS曲線のみでフェード
+- 孤立したkeyframes断片を除去
+- globalProgressを粒子描画に接続
+- OGP URL/canonical/faviconを設定
+- ROOM表示ロジックをCSS固定、JSはcopy進行だけに整理
+- reduced-motion変更と非表示タブでのRAF停止に対応
+- チケットURL未確定のためボタンを一時的に無効化
+
+
+## v44 cleanup
+- Removed `.room-door`, `.light-bg`, and `.transition-core` from HTML/CSS.
+- Retained the configured GitHub Pages OGP/canonical URL: `https://ryuik-on.github.io/ryu-ikon-room/`.
