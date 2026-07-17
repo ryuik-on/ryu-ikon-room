@@ -377,7 +377,10 @@ a { color: inherit; }
   position: sticky;
   top: 34vh;
   z-index: 3;
-  width: min(90vw, 780px);
+  /* 100%基準にする：90vwは親のpadding(7%)を考慮しないため、幅が
+     コンテナ幅を超えるとmargin-inline:autoが正しく中央寄せできない */
+  width: min(100%, 780px);
+  margin-inline: auto;
   text-align: center;
   color: rgba(238,238,238,0.84);
   font-family: "IBM Plex Sans JP", system-ui, sans-serif;
@@ -447,6 +450,7 @@ a { color: inherit; }
   height: 80vh;
   z-index: 2;
   width: min(100%, 980px);
+  margin-inline: auto;
   display: grid;
   justify-items: center;
   place-content: center;

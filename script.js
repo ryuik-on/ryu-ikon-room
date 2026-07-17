@@ -60,8 +60,11 @@ function updateLightTransition() {
   const rect = lightTransition.getBoundingClientRect();
   const travel = Math.max(rect.height - window.innerHeight, 1);
   const progress = clamp(-rect.top / travel, 0, 1);
-  const copyIn = clamp((progress - 0.02) / 0.08, 0, 1);
-  const copyOut = clamp((progress - 0.22) / 0.10, 0, 1);
+  // D-020修正B（案1）：フェードにCSS transitionは足さず、スクロール連動の
+  // 変化区間そのものを広げる（値を毎フレーム直接反映する既存方式を維持し、
+  // 高速スクロール時に追い抜かれないという設計を崩さないため）。
+  const copyIn = clamp((progress - 0.02) / 0.16, 0, 1);
+  const copyOut = clamp((progress - 0.28) / 0.14, 0, 1);
   const entranceCopy = copyIn * (1 - copyOut);
   const entranceCopyRise = copyOut * 9;
   const fieldReveal = clamp((progress - 0.34) / 0.22, 0, 1);
@@ -176,12 +179,14 @@ function updateRoomProgress() {
   const start = window.innerHeight * 0.95;
   const travel = Math.max(rect.height - window.innerHeight * 0.05, 1);
   const progress = clamp((start - rect.top) / travel, 0, 1);
-  const titleIn = clamp(progress / 0.14, 0, 1);
-  const titleOut = clamp((progress - 0.70) / 0.13, 0, 1);
+  // D-020修正B（案1）：室見出し／サブコピーのフェード距離を広げ、一瞬で
+  // 切り替わらないようにする（entrance-copyと同じ方針、詳細は同関数を参照）。
+  const titleIn = clamp(progress / 0.28, 0, 1);
+  const titleOut = clamp((progress - 0.62) / 0.20, 0, 1);
   const title = titleIn * (1 - titleOut);
   const blur = 6 * (1 - titleIn);
-  const copyIn = clamp((progress - 0.25) / 0.14, 0, 1);
-  const copyOut = clamp((progress - 0.63) / 0.12, 0, 1);
+  const copyIn = clamp((progress - 0.25) / 0.22, 0, 1);
+  const copyOut = clamp((progress - 0.63) / 0.18, 0, 1);
   const copy = copyIn * (1 - copyOut);
   return { title, blur, copy };
 }
