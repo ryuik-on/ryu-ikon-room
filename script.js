@@ -291,7 +291,17 @@ function update() {
   document.documentElement.style.setProperty('--room-copy', (roomProgress.copy || 0).toFixed(3));
 }
 
-window.addEventListener('scroll', update, { passive: true });
+let scrollScheduled = false;
+function onScroll() {
+  if (scrollScheduled) return;
+  scrollScheduled = true;
+  window.requestAnimationFrame(() => {
+    update();
+    scrollScheduled = false;
+  });
+}
+
+window.addEventListener('scroll', onScroll, { passive: true });
 window.addEventListener('resize', () => { if (!prefersReducedMotion) resizeCanvas(); update(); });
 
 update();
