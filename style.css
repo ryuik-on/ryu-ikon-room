@@ -118,6 +118,16 @@ a { color: inherit; }
   transform: translateY(6px);
   animation: heroTextIn 1.2s ease 2.55s forwards;
 }
+.hero-copy {
+  margin: 1.15rem 0 0;
+  color: rgba(236,236,236,0.86);
+  font-size: clamp(0.92rem, 1.7vw, 1.14rem);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: heroTextIn 1.3s ease 2.95s forwards;
+}
 .scroll-line {
   position: absolute;
   left: 50%;
@@ -127,7 +137,7 @@ a { color: inherit; }
   overflow: hidden;
   opacity: 0;
   transform: translateX(-50%);
-  animation: scrollCueIn 1s ease 3.4s forwards;
+  animation: scrollCueIn 1s ease 4.3s forwards;
 }
 .scroll-line::after {
   content: "";
@@ -135,7 +145,7 @@ a { color: inherit; }
   inset: 0;
   background: linear-gradient(to bottom, transparent, rgba(236,236,236,.74), transparent);
   transform: translateY(-100%);
-  animation: scrollCueMove 2.4s ease-in-out 3.9s infinite;
+  animation: scrollCueMove 2.4s ease-in-out 4.8s infinite;
 }
 @keyframes scrollCueIn { to { opacity: .48; } }
 @keyframes scrollCueMove {
@@ -562,7 +572,7 @@ a { color: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hero-logo, .hero-tagline, .scroll-line, .reveal { animation: none; transition: none; opacity: 1; transform: none; }
+  .hero-logo, .hero-tagline, .hero-copy, .scroll-line, .reveal { animation: none; transition: none; opacity: 1; transform: none; }
   .fixed-ticket { transition: none; }
   .room-title { opacity: 1; filter: none; }
   .fragment p { opacity: 1; transform: none; }
