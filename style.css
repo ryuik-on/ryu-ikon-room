@@ -10,9 +10,10 @@
   --room-blur: 6px;
   --room-copy: 0;
   --entrance-copy: 0;
-  --guide-opacity: 0;
-  --guide-y: 54.5;
-  --guide-scale: 1;
+  /* threshold-light: Hero〜ROOM入口を通しで同じ光が伴走する「導きの灯り」の状態 */
+  --threshold-opacity: 0.16;
+  --threshold-y: 8;
+  --threshold-scale: 0.55;
   --blackout-opacity: 0;
 }
 
@@ -37,24 +38,36 @@ a { color: inherit; }
   pointer-events: none;
 }
 
-.room-guide-light {
+/*
+ * threshold-light — DESIGN_PRINCIPLES「光は意味を持つ」に対応する唯一の常駐する光。
+ * 意味：Hero核フレーズのそばからROOM入口まで、ずっと同じ光が観客の側にある
+ *       （＝「自分だけじゃない」を視覚化した伴走の灯り）。
+ * 依存：Hero（初期状態）、light-transition（ROOM入口・増幅と受け渡し）。
+ */
+.threshold-light {
   position: fixed;
   left: 50%;
-  top: calc(var(--guide-y) * 1vh);
+  top: calc(var(--threshold-y) * 1vh);
   z-index: 3;
   width: 3.6px;
   height: 3.6px;
   border-radius: 999px;
   transform:
     translate(-50%, -50%)
-    scale(var(--guide-scale));
-  opacity: var(--guide-opacity);
+    scale(var(--threshold-scale));
+  opacity: var(--threshold-opacity);
   pointer-events: none;
   background: rgba(252,251,248,0.98);
   box-shadow:
     0 0 4px rgba(255,252,246,0.88),
     0 0 9px rgba(236,241,250,0.30);
-  will-change: top, opacity, transform, width;
+  will-change: top, opacity, transform;
+  /* 呼吸するような明滅。4〜6秒目安（光感受性・前庭障害への配慮） */
+  animation: thresholdBreathe 5s ease-in-out infinite;
+}
+@keyframes thresholdBreathe {
+  0%, 100% { filter: brightness(0.82); }
+  50% { filter: brightness(1.22); }
 }
 
 
@@ -103,6 +116,11 @@ a { color: inherit; }
   place-items: center;
 }
 .hero-inner { text-align:center; transform: translateY(-2px); }
+/*
+ * Hero登場の間隔（0.1s／0.45s／0.7s／1.9s）：D-017で「読み込みが止まって見える」
+ * という指摘を受け短縮。核フレーズ（hero-copy）は1秒以内に見え始めることを基準に
+ * 逆算して詰めている。scroll-lineはテキストが出揃った直後（1.9s）に案内する。
+ */
 .hero-logo {
   width: min(370px, 70vw);
   height: auto;
@@ -158,6 +176,8 @@ a { color: inherit; }
 }
 @keyframes heroLogoIn { to { opacity: 1; transform: scale(1); } }
 @keyframes heroTextIn { to { opacity: 1; transform: translateY(0); } }
+/* black-gap: セクション間の「間」。D-017で当初値（70/34/48/62vh）から
+   約半分に短縮し、「何もない黒」が続きすぎる問題に対応した。 */
 .black-gap { background: transparent; }
 .black-gap-hero { height: 38vh; }
 .black-gap-question { height: 18vh; }
@@ -371,10 +391,16 @@ a { color: inherit; }
   justify-items: center;
 }
 
+/* 既定（JS未実行／motion-off）は常に読める状態。演出はmotion-full/liteでのみ有効化 */
 .entrance-copy-primary {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+.motion-full .entrance-copy-primary,
+.motion-lite .entrance-copy-primary {
   opacity: var(--entrance-copy);
   transform: translateY(calc(var(--entrance-copy-rise) * -1px));
-  transition: none;
 }
 
 
@@ -447,11 +473,17 @@ a { color: inherit; }
   line-height: 1;
   letter-spacing: 0.18em;
   padding-left: 0.18em;
-  opacity: var(--room-title, 0);
+  /* 既定は常に読める状態。演出はmotion-full/liteでのみ有効化 */
+  opacity: 1;
   transform: none;
   text-shadow: none;
-  filter: blur(var(--room-blur, 6px));
+  filter: none;
   will-change: opacity, filter;
+}
+.motion-full .room-title,
+.motion-lite .room-title {
+  opacity: var(--room-title, 0);
+  filter: blur(var(--room-blur, 6px));
 }
 
 .room-copy {
@@ -462,9 +494,13 @@ a { color: inherit; }
   font-weight: 300;
   line-height: 1.9;
   letter-spacing: 0.10em;
-  opacity: var(--room-copy, 0);
+  opacity: 1;
   will-change: opacity;
   transform: none;
+}
+.motion-full .room-copy,
+.motion-lite .room-copy {
+  opacity: var(--room-copy, 0);
 }
 
 
@@ -520,6 +556,9 @@ a { color: inherit; }
 .ticket-date,.ticket-time,.ticket-place,.ticket-price,.ticket-help,.ticket-note { width:100%; margin:0; text-align:center; }
 .ticket-date { font-size:clamp(1.45rem,2.45vw,1.78rem); font-weight:400; letter-spacing:.08em; }
 .ticket-time,.ticket-place,.ticket-price,.ticket-help { font-size:clamp(1.08rem,1.85vw,1.24rem); line-height:1.9; }
+.ticket-time-note { display:inline-block; margin-top:.15em; font-size:.72em; letter-spacing:.06em; color:rgba(230,230,230,.6); }
+.ticket-place-link { color:inherit; text-decoration:underline; text-decoration-color:rgba(236,236,236,.35); text-underline-offset:.22em; transition:text-decoration-color .3s ease; }
+.ticket-place-link:hover,.ticket-place-link:focus-visible { text-decoration-color:rgba(250,250,250,.85); }
 .ticket-button { display:inline-grid; place-items:center; width:min(250px,78vw); height:54px; border:1px solid rgba(240,240,240,.72); color:var(--text); text-decoration:none; font-size:.9rem; font-weight:400; letter-spacing:.22em; background:rgba(255,255,255,.015); transition:background-color .35s ease,border-color .35s ease; }
 .ticket-button:hover { background:rgba(240,240,240,.06); border-color:rgba(250,250,250,.92); }
 .ticket-note { max-width:34ch; color:rgba(230,230,230,.66); font-size:clamp(.86rem,1.25vw,.96rem); line-height:1.9; }
@@ -585,14 +624,30 @@ a { color: inherit; }
   .instagram-link svg { width:23px; height:23px; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .hero-logo, .hero-tagline, .hero-copy, .scroll-line, .reveal { animation: none; transition: none; opacity: 1; transform: none; }
-  .fixed-ticket { transition: none; }
-  .room-title { opacity: 1; filter: none; }
-  .fragment p { opacity: 1; transform: none; }
-  .ticket-frame::before, .ticket-frame::after { animation:none; opacity:0; }
+/* motion-off: OSのprefers-reduced-motion:reduce、または検知不能な環境の安全側フォールバック */
+html.motion-off { scroll-behavior: auto; }
+.motion-off .hero-logo,
+.motion-off .hero-tagline,
+.motion-off .hero-copy,
+.motion-off .scroll-line,
+.motion-off .reveal {
+  animation: none;
+  transition: none;
+  opacity: 1;
+  transform: none;
 }
+.motion-off .fixed-ticket { transition: none; }
+.motion-off .fragment p { opacity: 1; transform: none; }
+.motion-off .ticket-frame::before,
+.motion-off .ticket-frame::after { animation: none; opacity: 0; }
+.motion-off .visual-stage { opacity: 1; }
+.motion-off .threshold-light {
+  animation: none;
+  opacity: 0.16;
+  top: 8vh;
+  transform: translate(-50%, -50%) scale(0.55);
+}
+.motion-off .room-blackout { display: none; }
 
 @media (max-width: 760px) {
   .room-title {
@@ -616,9 +671,14 @@ a { color: inherit; }
 .founders-motion {
   width: 100%;
   text-align: center;
+  opacity: 1;
+  transform: none;
+  will-change: opacity, transform;
+}
+.motion-full .founders-motion,
+.motion-lite .founders-motion {
   opacity: var(--founder-presence, 0);
   transform: translateY(calc(14px - var(--founder-progress, 0) * 40px));
-  will-change: opacity, transform;
 }
 
 
@@ -644,9 +704,14 @@ a { color: inherit; }
 }
 .sticky-copy-motion {
   margin: 0;
+  opacity: 1;
+  transform: none;
+  will-change: opacity, transform;
+}
+.motion-full .sticky-copy-motion,
+.motion-lite .sticky-copy-motion {
   opacity: var(--copy-presence, 0);
   transform: translateY(calc(14px - var(--copy-progress, 0) * 38px));
-  will-change: opacity, transform;
 }
 .question .sticky-copy-motion,
 .statement .sticky-copy-motion { width: min(92vw, 860px); }
@@ -684,6 +749,8 @@ a { color: inherit; }
   width: min(95vw, 1540px);
   max-height: 88vh;
   aspect-ratio: 4 / 3;
+  /* 読み込み前も黒背景にして「暗闇から写真が浮かぶ」演出と一体化する */
+  background: #000;
 }
 .visual-story .fragment {
   position: relative;
@@ -692,6 +759,11 @@ a { color: inherit; }
 }
 .visual-story .fragment p {
   top: 36vh;
+  opacity: 1;
+  transform: none;
+}
+.motion-full .visual-story .fragment p,
+.motion-lite .visual-story .fragment p {
   opacity: var(--text-presence);
   transform: translateY(calc(14px - var(--text-progress) * 36px));
 }
@@ -708,11 +780,4 @@ a { color: inherit; }
   .light-transition { min-height: 260vh; }
   .founders-note { min-height: 122vh; }
   .room-section { min-height: 150vh; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sticky-copy-motion, .founders-motion, .visual-story .fragment p { opacity: 1; transform: none; }
-  .visual-stage { opacity: 1; }
-  .entrance-copy-primary { opacity: 1; transform: none; }
-  .room-guide-light, .room-blackout { display: none; }
 }

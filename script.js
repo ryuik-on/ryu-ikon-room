@@ -8,8 +8,24 @@ const visualStories = Array.from(document.querySelectorAll('.visual-story'));
 const blackoutLayer = document.querySelector('.room-blackout');
 const canvas = document.querySelector('.particle-canvas');
 const ctx = canvas ? canvas.getContext('2d') : null;
-const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-let prefersReducedMotion = motionQuery.matches;
+
+// no-motion-first: 「no-preference」を明示的に確認できた場合のみ動きを許可する。
+// matchMediaがこのメディア特性に未対応の環境ではmatches=falseになるため、
+// 未知の環境は自動的に安全側（motion-off）に倒れる。
+const motionQuery = window.matchMedia('(prefers-reduced-motion: no-preference)');
+let motionTier = motionQuery.matches ? 'full' : 'off'; // 'full' | 'lite' | 'off'
+
+function applyMotionTier(tier) {
+  motionTier = tier;
+  document.documentElement.classList.remove('motion-full', 'motion-lite', 'motion-off');
+  document.documentElement.classList.add('motion-' + tier);
+}
+applyMotionTier(motionTier);
+
+// threshold-lightの既定（周囲環境）値。CSSの:root初期値と一致させること。
+const AMBIENT_OPACITY = 0.16;
+const AMBIENT_Y = 8;
+const AMBIENT_SCALE = 0.55;
 
 const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -53,23 +69,37 @@ function updateLightTransition() {
   const particleFade = clamp((progress - 0.72) / 0.18, 0, 1);
   const guideIn = clamp((progress - 0.39) / 0.08, 0, 1);
   const guideOut = clamp((progress - 0.895) / 0.045, 0, 1);
-  const guideOpacity = guideIn * (1 - guideOut);
-  const guideScale = 1 - guideOut * 0.78;
-  const guideY = 54.5 - guideOut * 0.8;
+  const entranceThresholdOpacity = guideIn * (1 - guideOut);
+  const entranceThresholdScale = 1 - guideOut * 0.78;
+  const entranceThresholdY = 54.5 - guideOut * 0.8;
   const blackoutIn = clamp((progress - 0.925) / 0.025, 0, 1);
   const blackoutOut = clamp((progress - 0.965) / 0.025, 0, 1);
   const blackout = blackoutIn * (1 - blackoutOut);
+
+  // threshold-light: Hero〜ROOM入口を通しで伴走する唯一の光（B-1）。
+  // 入口区間に入るまではAMBIENT値（控えめ）を保ち、guideInの立ち上がりに
+  // 合わせて入口用の値へ滑らかに引き継ぐ。ROOM入口を過ぎたら役目を終えて消える
+  // （以降はroom-stageの到着グローが引き継ぐため、光の意味の重複を避ける）。
+  const pastThreshold = blackoutOut >= 1;
+  const thresholdOpacity = pastThreshold ? 0 : Math.max(AMBIENT_OPACITY, entranceThresholdOpacity);
+  const thresholdScale = pastThreshold
+    ? entranceThresholdScale
+    : AMBIENT_SCALE + (entranceThresholdScale - AMBIENT_SCALE) * guideIn;
+  const thresholdY = pastThreshold
+    ? entranceThresholdY
+    : AMBIENT_Y + (entranceThresholdY - AMBIENT_Y) * guideIn;
+
   const root = document.documentElement.style;
   root.setProperty('--light-progress', progress.toFixed(3));
   root.setProperty('--entrance-copy', entranceCopy.toFixed(3));
   root.setProperty('--entrance-copy-rise', entranceCopyRise.toFixed(3));
   root.setProperty('--field-reveal', fieldReveal.toFixed(3));
-  root.setProperty('--guide-opacity', guideOpacity.toFixed(3));
-  root.setProperty('--guide-y', guideY.toFixed(3));
-  root.setProperty('--guide-scale', Math.max(0.12, guideScale).toFixed(3));
+  root.setProperty('--threshold-opacity', thresholdOpacity.toFixed(3));
+  root.setProperty('--threshold-y', thresholdY.toFixed(3));
+  root.setProperty('--threshold-scale', Math.max(0.12, thresholdScale).toFixed(3));
   root.setProperty('--blackout-opacity', blackout.toFixed(3));
   blackoutLayer?.classList.toggle('is-active', blackout > 0.002);
-  return { progress, fieldReveal, inward, particleFade, guide: guideOpacity, blackout };
+  return { progress, fieldReveal, inward, particleFade, guide: thresholdOpacity, blackout };
 }
 
 // Particles
@@ -84,6 +114,7 @@ let entranceProgress = { progress: 0, fieldReveal: 0, inward: 0, particleFade: 0
 
 function resizeCanvas() {
   if (!canvas || !ctx) return;
+  // 高密度ディスプレイでの描画負荷を抑えるため2倍までに制限する。
   dpr = Math.min(window.devicePixelRatio || 1, 2);
   width = window.innerWidth;
   height = window.innerHeight;
@@ -134,6 +165,11 @@ function createParticles(count = 154) {
   }
 }
 
+function particleCountFor(tier) {
+  const base = window.innerWidth < 760 ? 126 : 168;
+  return tier === 'lite' ? Math.round(base / 2) : base;
+}
+
 function updateRoomProgress() {
   if (!roomSection) return { title: 0, blur: 6, copy: 0 };
   const rect = roomSection.getBoundingClientRect();
@@ -150,8 +186,6 @@ function updateRoomProgress() {
   return { title, blur, copy };
 }
 
-
-
 function updateFoundersProgress() {
   if (!foundersNote) return 0;
   const rect = foundersNote.getBoundingClientRect();
@@ -165,8 +199,6 @@ function updateFoundersProgress() {
   root.setProperty('--founder-presence', presence.toFixed(3));
   return progress;
 }
-
-
 
 function updateScrollScenes() {
   stickyCopySections.forEach((section) => {
@@ -194,8 +226,6 @@ function updateScrollScenes() {
   });
 }
 
-
-
 function updateGlobalProgress() {
   const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const raw = window.scrollY / maxScroll;
@@ -206,8 +236,31 @@ function updateGlobalProgress() {
   return clamp((raw - 0.15) / 0.58, 0.08, 1);
 }
 
+// 初回のパーティクル稼働から約1.5秒分のフレーム時間を実測し、
+// 重い環境ではmotion-liteへ自動的に間引く（適応型劣化）。
+const FPS_SAMPLE_FRAMES = 90;
+const FPS_LITE_THRESHOLD = 40;
+let fpsSampleFrames = 0;
+let fpsSampleStart = 0;
+let fpsSampleDone = false;
+
+function sampleFrameRate(time) {
+  if (fpsSampleDone || motionTier !== 'full') return;
+  if (!fpsSampleStart) { fpsSampleStart = time; return; }
+  fpsSampleFrames += 1;
+  if (fpsSampleFrames < FPS_SAMPLE_FRAMES) return;
+  const elapsed = time - fpsSampleStart;
+  const measuredFps = (fpsSampleFrames / elapsed) * 1000;
+  fpsSampleDone = true;
+  if (measuredFps < FPS_LITE_THRESHOLD) {
+    applyMotionTier('lite');
+    createParticles(particleCountFor('lite'));
+  }
+}
+
 function drawParticles(time) {
-  if (prefersReducedMotion || !ctx || !canvas) return;
+  if (motionTier === 'off' || !ctx || !canvas) return;
+  sampleFrameRate(time);
   ctx.clearRect(0, 0, width, height);
 
   const ep = entranceProgress.progress || 0;
@@ -279,6 +332,7 @@ function drawParticles(time) {
 
   animationFrameId = window.requestAnimationFrame(drawParticles);
 }
+
 function update() {
   updateFixedTicket();
   updateFoundersProgress();
@@ -302,7 +356,7 @@ function onScroll() {
 }
 
 window.addEventListener('scroll', onScroll, { passive: true });
-window.addEventListener('resize', () => { if (!prefersReducedMotion) resizeCanvas(); update(); });
+window.addEventListener('resize', () => { if (motionTier !== 'off') resizeCanvas(); update(); });
 
 update();
 
@@ -312,9 +366,9 @@ update();
 let particlesRunning = false;
 
 function startParticles() {
-  if (particlesRunning || prefersReducedMotion || !ctx) return;
+  if (particlesRunning || motionTier === 'off' || !ctx) return;
   particlesRunning = true;
-  if (!particles.length) createParticles(window.innerWidth < 760 ? 126 : 168);
+  if (!particles.length) createParticles(particleCountFor(motionTier));
   if (!document.hidden && !animationFrameId) animationFrameId = requestAnimationFrame(drawParticles);
 }
 
@@ -325,7 +379,7 @@ function stopParticles() {
   if (ctx) ctx.clearRect(0, 0, width, height);
 }
 
-if (!prefersReducedMotion && ctx) {
+if (motionTier !== 'off' && ctx) {
   resizeCanvas();
   if (lightTransition && 'IntersectionObserver' in window) {
     const particleObserver = new IntersectionObserver((entries) => {
@@ -343,13 +397,16 @@ if (!prefersReducedMotion && ctx) {
 }
 
 function syncMotionPreference(event) {
-  prefersReducedMotion = event.matches;
-  if (prefersReducedMotion) {
+  applyMotionTier(event.matches ? 'full' : 'off');
+  if (motionTier === 'off') {
     stopParticles();
     if (canvas) canvas.style.display = 'none';
   } else if (canvas) {
     canvas.style.display = '';
     resizeCanvas();
+    fpsSampleDone = false;
+    fpsSampleFrames = 0;
+    fpsSampleStart = 0;
     startParticles();
   }
 }
@@ -358,7 +415,7 @@ motionQuery.addEventListener?.('change', syncMotionPreference);
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
-  } else if (particlesRunning && !prefersReducedMotion && ctx && !animationFrameId) {
+  } else if (particlesRunning && motionTier !== 'off' && ctx && !animationFrameId) {
     animationFrameId = requestAnimationFrame(drawParticles);
   }
 });
