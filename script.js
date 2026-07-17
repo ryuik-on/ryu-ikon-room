@@ -143,7 +143,7 @@ function updateRoomProgress() {
   const titleIn = clamp(progress / 0.14, 0, 1);
   const titleOut = clamp((progress - 0.70) / 0.13, 0, 1);
   const title = titleIn * (1 - titleOut);
-  const blur = 6 * (1 - titleIn) + 1.5 * titleOut;
+  const blur = 6 * (1 - titleIn);
   const copyIn = clamp((progress - 0.25) / 0.14, 0, 1);
   const copyOut = clamp((progress - 0.63) / 0.12, 0, 1);
   const copy = copyIn * (1 - copyOut);
@@ -306,35 +306,59 @@ window.addEventListener('resize', () => { if (!prefersReducedMotion) resizeCanva
 
 update();
 
+// パーティクルはlight-transition（ROOM入口）付近でのみ稼働させる。
+// 常時rAFを回し続けるとページ全体でメインスレッドを占有するため、
+// IntersectionObserverでその区間の前後60vhに入っている間だけ動かす。
+let particlesRunning = false;
+
+function startParticles() {
+  if (particlesRunning || prefersReducedMotion || !ctx) return;
+  particlesRunning = true;
+  if (!particles.length) createParticles(window.innerWidth < 760 ? 126 : 168);
+  if (!document.hidden && !animationFrameId) animationFrameId = requestAnimationFrame(drawParticles);
+}
+
+function stopParticles() {
+  particlesRunning = false;
+  if (animationFrameId) cancelAnimationFrame(animationFrameId);
+  animationFrameId = null;
+  if (ctx) ctx.clearRect(0, 0, width, height);
+}
+
 if (!prefersReducedMotion && ctx) {
   resizeCanvas();
-  createParticles(window.innerWidth < 760 ? 126 : 168);
-  animationFrameId = window.requestAnimationFrame(drawParticles);
+  if (lightTransition && 'IntersectionObserver' in window) {
+    const particleObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) startParticles();
+        else stopParticles();
+      });
+    }, { rootMargin: '60% 0px 60% 0px' });
+    particleObserver.observe(lightTransition);
+  } else {
+    startParticles();
+  }
 } else if (canvas) {
   canvas.remove();
 }
 
-
 function syncMotionPreference(event) {
   prefersReducedMotion = event.matches;
   if (prefersReducedMotion) {
-    if (animationFrameId) cancelAnimationFrame(animationFrameId);
-    animationFrameId = null;
+    stopParticles();
     if (canvas) canvas.style.display = 'none';
   } else if (canvas) {
     canvas.style.display = '';
     resizeCanvas();
-    if (!particles.length) createParticles(window.innerWidth < 760 ? 126 : 168);
-    if (!animationFrameId && !document.hidden) animationFrameId = requestAnimationFrame(drawParticles);
+    startParticles();
   }
 }
 
 motionQuery.addEventListener?.('change', syncMotionPreference);
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden && animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-    animationFrameId = null;
-  } else if (!document.hidden && !prefersReducedMotion && ctx && !animationFrameId) {
+  if (document.hidden) {
+    if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
+  } else if (particlesRunning && !prefersReducedMotion && ctx && !animationFrameId) {
     animationFrameId = requestAnimationFrame(drawParticles);
   }
 });
