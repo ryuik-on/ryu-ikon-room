@@ -27,6 +27,21 @@ const AMBIENT_OPACITY = 0.16;
 const AMBIENT_Y = 8;
 const AMBIENT_SCALE = 0.55;
 
+// D-021: 高速スクロール時に entrance-copy／room-title が「一瞬で消える」対策。
+// スクロール位置から出した目標値(target)を、フレームごとに実時間で少しずつ
+// 近づける減衰(lerp)を挟んでからCSS変数へ書き込む。スクロールを止めれば
+// 最終的に正しい値へ収束するため位置とズレたまま固定される心配はなく、
+// CSS transitionを使わないのでrAF毎フレーム更新との競合も避けられる。
+const DISPLAY_DAMPING = 0.2; // 0〜1。実機確認で「遅れすぎない」範囲として選定
+function lerp(current, target, damping) {
+  return current + (target - current) * damping;
+}
+let displayedEntranceCopy = 0;
+let displayedEntranceCopyRise = 0;
+let displayedRoomTitle = 0;
+let displayedRoomBlur = 6;
+let displayedRoomCopy = 0;
+
 const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
@@ -92,10 +107,13 @@ function updateLightTransition() {
     ? entranceThresholdY
     : AMBIENT_Y + (entranceThresholdY - AMBIENT_Y) * guideIn;
 
+  displayedEntranceCopy = lerp(displayedEntranceCopy, entranceCopy, DISPLAY_DAMPING);
+  displayedEntranceCopyRise = lerp(displayedEntranceCopyRise, entranceCopyRise, DISPLAY_DAMPING);
+
   const root = document.documentElement.style;
   root.setProperty('--light-progress', progress.toFixed(3));
-  root.setProperty('--entrance-copy', entranceCopy.toFixed(3));
-  root.setProperty('--entrance-copy-rise', entranceCopyRise.toFixed(3));
+  root.setProperty('--entrance-copy', displayedEntranceCopy.toFixed(3));
+  root.setProperty('--entrance-copy-rise', displayedEntranceCopyRise.toFixed(3));
   root.setProperty('--field-reveal', fieldReveal.toFixed(3));
   root.setProperty('--threshold-opacity', thresholdOpacity.toFixed(3));
   root.setProperty('--threshold-y', thresholdY.toFixed(3));
@@ -188,7 +206,14 @@ function updateRoomProgress() {
   const copyIn = clamp((progress - 0.25) / 0.22, 0, 1);
   const copyOut = clamp((progress - 0.63) / 0.18, 0, 1);
   const copy = copyIn * (1 - copyOut);
-  return { title, blur, copy };
+
+  // D-021：title／blur／copyも同じ仕組み（スクロール位置に直結）のため、
+  // 同じ減衰を適用して高速スクロール時の瞬間切り替えを避ける。
+  displayedRoomTitle = lerp(displayedRoomTitle, title, DISPLAY_DAMPING);
+  displayedRoomBlur = lerp(displayedRoomBlur, blur, DISPLAY_DAMPING);
+  displayedRoomCopy = lerp(displayedRoomCopy, copy, DISPLAY_DAMPING);
+
+  return { title: displayedRoomTitle, blur: displayedRoomBlur, copy: displayedRoomCopy };
 }
 
 function updateFoundersProgress() {
