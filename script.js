@@ -41,6 +41,11 @@ let displayedEntranceCopyRise = 0;
 let displayedRoomTitle = 0;
 let displayedRoomBlur = 6;
 let displayedRoomCopy = 0;
+let displayedFounderPresence = 0;
+// D-022: 問い／Statementはセクションごとに別要素なので、要素ごとに
+// 表示中の値を保持する（写真断片も同様）。
+const displayedCopyPresence = new Map();
+const displayedFragmentPresence = new Map();
 
 const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -224,9 +229,11 @@ function updateFoundersProgress() {
   const enter = clamp(progress / 0.18, 0, 1);
   const exit = clamp((progress - 0.82) / 0.18, 0, 1);
   const presence = enter * (1 - exit);
+  // D-022: lerp未適用だった箇所にD-021と同じ減衰を追加。
+  displayedFounderPresence = lerp(displayedFounderPresence, presence, DISPLAY_DAMPING);
   const root = document.documentElement.style;
   root.setProperty('--founder-progress', progress.toFixed(3));
-  root.setProperty('--founder-presence', presence.toFixed(3));
+  root.setProperty('--founder-presence', displayedFounderPresence.toFixed(3));
   return progress;
 }
 
@@ -236,9 +243,17 @@ function updateScrollScenes() {
     const travel = Math.max(rect.height - window.innerHeight, 1);
     const progress = clamp(-rect.top / travel, 0, 1);
     const enter = clamp(progress / 0.16, 0, 1);
-    const exit = clamp((progress - 0.82) / 0.18, 0, 1);
+    // D-022: 退場窓を0.18(進行率82%〜100%)から0.40(55%〜95%)へ拡大。
+    // 実測で「問い」約12px・「Statement」約27pxしかなかった退場フェードの
+    // 絶対スクロール距離を確保するため（style.css側のmin-height拡張とセット）。
+    const exit = clamp((progress - 0.55) / 0.40, 0, 1);
+    const target = enter * (1 - exit);
+    // D-022: lerp未適用だった箇所にD-021と同じ減衰を追加。セクションごとに
+    // 表示中の値を保持する必要があるためMapで管理。
+    const displayed = lerp(displayedCopyPresence.get(section) ?? 0, target, DISPLAY_DAMPING);
+    displayedCopyPresence.set(section, displayed);
     section.style.setProperty('--copy-progress', progress.toFixed(3));
-    section.style.setProperty('--copy-presence', (enter * (1 - exit)).toFixed(3));
+    section.style.setProperty('--copy-presence', displayed.toFixed(3));
   });
   visualStories.forEach((story) => {
     const rect = story.getBoundingClientRect();
@@ -248,10 +263,13 @@ function updateScrollScenes() {
     const photoOpacity = 1 - photoFade;
     const textIn = clamp((progress - 0.50) / 0.18, 0, 1);
     const textOut = clamp((progress - 0.88) / 0.12, 0, 1);
-    const textPresence = textIn * (1 - textOut);
+    const textTarget = textIn * (1 - textOut);
     const textProgress = clamp((progress - 0.50) / 0.50, 0, 1);
+    // D-022: 写真断片のテキストにもlerpを追加（対象範囲に明記）。
+    const displayedText = lerp(displayedFragmentPresence.get(story) ?? 0, textTarget, DISPLAY_DAMPING);
+    displayedFragmentPresence.set(story, displayedText);
     story.style.setProperty('--photo-opacity', photoOpacity.toFixed(3));
-    story.style.setProperty('--text-presence', textPresence.toFixed(3));
+    story.style.setProperty('--text-presence', displayedText.toFixed(3));
     story.style.setProperty('--text-progress', textProgress.toFixed(3));
   });
 }

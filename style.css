@@ -132,9 +132,13 @@ a { color: inherit; }
   animation: heroLogoIn 1s ease 0.1s forwards;
 }
 .hero-tagline {
+  /* pからh1へ変更（D-022・h1導入）。UA既定のbold/marginを打ち消すため
+     font-weight/font-familyも明示しておく（見た目は変更前と同一） */
   margin: 0.82rem 0 0;
   color: var(--muted);
+  font-family: "IBM Plex Sans JP", system-ui, sans-serif;
   font-size: clamp(0.68rem, 1.2vw, 0.84rem);
+  font-weight: 300;
   letter-spacing: 0.24em;
   opacity: 0;
   transform: translateY(6px);
@@ -697,8 +701,10 @@ html.motion-off { scroll-behavior: auto; }
   padding: 0 7%;
   text-align: center;
 }
-.question.sticky-copy { min-height: 110vh; }
-.statement.sticky-copy { min-height: 122vh; }
+/* D-022: 退場フェード窓（script.js側で進行率55%〜95%に拡大）が
+   絶対スクロール距離として十分になるよう、min-heightを引き上げた */
+.question.sticky-copy { min-height: 145vh; }
+.statement.sticky-copy { min-height: 155vh; }
 .sticky-copy-stage {
   position: sticky;
   top: 10vh;
@@ -773,8 +779,8 @@ html.motion-off { scroll-behavior: auto; }
 }
 
 @media (max-width: 760px) {
-  .question.sticky-copy { min-height: 108vh; }
-  .statement.sticky-copy { min-height: 118vh; }
+  .question.sticky-copy { min-height: 143vh; }
+  .statement.sticky-copy { min-height: 151vh; }
   .sticky-copy-stage, .founders-stage, .room-stage { top: 8vh; height: 84vh; }
   .visual-story { min-height: 185vh; }
   .visual-story .visual { min-height: 118vh; }
