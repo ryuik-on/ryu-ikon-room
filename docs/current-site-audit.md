@@ -8,7 +8,7 @@
 
 ## 結論
 
-旧サイトは依存関係やビルド工程を持たない、単一ページの静的HTML/CSS/JavaScriptサイトです。公開ページは調査時点で表示でき、ローカル`main`と同じコピー・導線・素材参照を持っていました。リポジトリ内にGitHub Actions、Pages用workflow、`CNAME`、`.nojekyll`はありません。公開URLとルート相対参照の動作から、GitHub Pagesのプロジェクトサイトとしてブランチのルートから配信されている可能性が高い一方、Pages設定画面は公開情報だけでは確認できないため、正確なsource branch/folderは要確認です。
+旧サイトは依存関係やビルド工程を持たない、単一ページの静的HTML/CSS/JavaScriptサイトです。公開ページは調査時点で表示でき、ローカル`main`と同じコピー・導線・素材参照を持っていました。リポジトリ内にGitHub Actions、Pages用workflow、`CNAME`、`.nojekyll`はありません。公開URLとルート相対参照の動作は、GitHub Pages設定画面のスクリーンショット（2026-07-23、主催者提供）で裏付けが取れました。source branch/folderは`main`ブランチ / `(root)`、配信方式は「Deploy from a branch」です。
 
 v2では確定情報と全体構成だけを引き継ぎ、HTML/CSS/JavaScriptは流用しません。
 
@@ -165,7 +165,7 @@ v2は一から実装します。旧コードは挙動調査と復元だけに使
 - Analytics: なし
 - base path: 相対参照により`/ryu-ikon-room/`で動作。OGP/canonicalは絶対URL
 - Actions: `.github/workflows`なし
-- Pages: 公開URLは稼働。正確なsource branch/folderはGitHub設定画面で要確認
+- Pages: 公開URLは稼働。source: `main`ブランチ / `(root)`、「Deploy from a branch」方式（2026-07-23、GitHub Settings画面のスクリーンショットで確認済み）
 
 ## 壊れている参照・不要ファイル候補
 
@@ -176,5 +176,5 @@ v2は一から実装します。旧コードは挙動調査と復元だけに使
 
 ## 調査上の制約
 
-- GitHub Pages設定画面、リポジトリのSecrets、独自ドメイン設定は公開リポジトリのファイルからは確認できません。
+- GitHub Pagesのbuild/deployment設定は主催者提供のスクリーンショットで確認済みです（`main` / `(root)`）。リポジトリのSecrets、独自ドメイン設定は今回も確認できていません。
 - 外部サイトの状態は2026-07-23時点の確認結果です。公開前に再検証が必要です。
