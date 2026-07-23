@@ -6,6 +6,7 @@ import photo01 from "../assets/photos/photo-01.jpg";
 import photo02 from "../assets/photos/photo-02.jpg";
 import photo03 from "../assets/photos/photo-03.jpg";
 
+// 素材はすべて部内撮影・使用可確認済み（facts-and-content.md参照）
 const photos = [
   { src: photo01, alt: "マイクに向かって手を伸ばすボーカルと、それに応える観客たち" },
   { src: photo02, alt: "目を閉じてギターを弾く奏者" },
@@ -47,12 +48,12 @@ const jsonLd = {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
 		<title>ROOM｜{eventInfo.organizer}</title>
 		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	</head>
 	<body>
-		<!-- Phase 4: Hero。IMG_9599（claude_room提供・部内撮影で使用可確認済み、公式サイトROOMブロックと同一素材）とRyuik-onロゴを使用。 -->
-		<!-- 公式サイト（ryuik-on.github.io）のROOM告知ブロックにレイアウトを揃える。文字は画像に焼き込まず実テキストで重ねる。 -->
+		<a class="skip-link" href="#content">本文へ移動</a>
 
 		<header class="hero">
 			<div class="brand-bar">
@@ -73,21 +74,173 @@ const jsonLd = {
 				<p class="hero-label">ONE-MAN LIVE</p>
 				<h1 class="hero-title">ROOM</h1>
 				<p class="hero-meta">
-					{eventInfo.date}<br />
+					<time class="hero-date" datetime="2026-11-22">2026.11.22 SUN</time><br />
 					{eventInfo.venue}<br />
-					OPEN {eventInfo.open} / START {eventInfo.start}
+					<span class="hero-times">OPEN {eventInfo.open} / START {eventInfo.start}</span>
 				</p>
 			</div>
 		</header>
 
+		<main id="content">
+			<section aria-label="写真" class="photos">
+				<h2 class="sr-only">写真</h2>
+				<ul class="photo-list">
+					{photos.map((photo) => (
+						<li>
+							<Image
+								src={photo.src}
+								alt={photo.alt}
+								widths={[480, 768, 1080]}
+								sizes="(min-width: 768px) 66vw, 100vw"
+								loading="eager"
+							/>
+						</li>
+					))}
+				</ul>
+			</section>
+
+			<section aria-label="ROOMのコンセプト" class="content-section concept">
+				<h2 class="sr-only">ROOMのコンセプト</h2>
+				<p>
+					音を鳴らしている姿。<br />
+					その姿から伝わる熱は、<br class="sp-only" />必要としている誰かに届くはずです。
+				</p>
+			</section>
+
+			<section aria-label="Founder's Note" class="content-section founder">
+				<h2 class="eyebrow">Founder's Note</h2>
+				<p>
+					だから、この夜をつくります。<br />
+					鳴らした音を、届くべき人へ。<br />
+					それを目の当たりにすれば、自分だけじゃないと思えるかもしれません。
+				</p>
+			</section>
+
+			<section aria-label="公演情報" class="content-section info">
+				<h2 class="section-title">公演情報</h2>
+				<dl>
+					<dt>公演名</dt>
+					<dd>ROOM</dd>
+					<dt>主催</dt>
+					<dd>{eventInfo.organizer}</dd>
+					<dt>日程</dt>
+					<dd><time datetime="2026-11-22">{eventInfo.date}</time></dd>
+					<dt>OPEN</dt>
+					<dd>{eventInfo.open}</dd>
+					<dt>START</dt>
+					<dd>{eventInfo.start}</dd>
+					<dt>終演目安</dt>
+					<dd>{eventInfo.endEstimate}</dd>
+					<dt>会場</dt>
+					<dd>
+						{eventInfo.venue}<br />
+						<a class="venue-link" href={mapUrl} target="_blank" rel="noopener">地図を見る（Google Maps）</a>
+					</dd>
+					<dt>料金</dt>
+					<dd>学生 1,000円 / 一般 1,500円 / 小人 500円</dd>
+					<dt>当日券</dt>
+					<dd>販売あり（前売り残数がある場合のみ）</dd>
+					<dt>出演者</dt>
+					<dd>後日公開</dd>
+					<dt>セットリスト</dt>
+					<dd>後日公開</dd>
+				</dl>
+			</section>
+
+			<section aria-label="チケット" class="content-section ticket" id="ticket">
+				<h2 class="section-title">チケット</h2>
+				<p class="sale-date">前売券は <time datetime="2026-08-22">2026年8月22日（土）</time> 販売開始</p>
+				<p>
+					<a class="cta" href="https://teket.jp/19130/74082">チケットを購入する</a>
+				</p>
+				<p class="ticket-note">teket（外部サイト）が開きます</p>
+			</section>
+
+			<section aria-label="Instagram・公式サイトへの導線" class="content-section links">
+				<h2 class="section-title">最新情報・問い合わせ</h2>
+				<ul>
+					<li><a href="https://www.instagram.com/ryuikeion/" target="_blank" rel="noopener">Instagram</a></li>
+					<li><a href="https://ryuik-on.github.io/ryuik-on-official" target="_blank" rel="noopener">公式サイト</a></li>
+					<li><span class="dim">問い合わせ先（準備中）</span></li>
+				</ul>
+			</section>
+		</main>
+
+		<footer>
+			<p>&copy; 2026 {eventInfo.organizer}</p>
+			<p><a href="#top">ページ先頭へ戻る</a></p>
+		</footer>
+
+		<a class="ticket-pill" href="#ticket">TICKET</a>
+
+		<style is:global>
+			:root {
+				color-scheme: dark;
+				--bg: #16130f;
+				--bg-deep: #0e0c09;
+				--text: #ede7dc;
+				--text-dim: #a89e90;
+				--accent: #d9a961;
+				--accent-strong: #e6bd7c;
+				--line: #332d24;
+			}
+			html {
+				background: var(--bg);
+			}
+			body {
+				margin: 0;
+				background: var(--bg);
+				color: var(--text);
+				font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+				line-height: 1.9;
+			}
+			a {
+				color: var(--accent);
+			}
+			a:focus-visible {
+				outline: 2px solid var(--accent);
+				outline-offset: 3px;
+			}
+			::selection {
+				background: var(--accent);
+				color: var(--bg-deep);
+			}
+		</style>
+
 		<style>
+			.skip-link {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				z-index: 100;
+				background: var(--accent);
+				color: var(--bg-deep);
+				padding: 10px 18px;
+			}
+			.skip-link:focus {
+				left: 0;
+			}
+
+			.sr-only {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0, 0, 0, 0);
+				white-space: nowrap;
+				border: 0;
+			}
+
+			/* ---- Hero ---- */
 			.hero {
 				position: relative;
 				min-height: min(100svh, 820px);
 				display: flex;
 				align-items: flex-end;
 				overflow: hidden;
-				color: #f5f3f0;
+				color: var(--text);
 			}
 			.brand-bar {
 				position: absolute;
@@ -99,7 +252,7 @@ const jsonLd = {
 				align-items: center;
 				gap: 10px;
 				padding: 14px clamp(20px, 6vw, 64px);
-				background: linear-gradient(to bottom, rgba(10, 9, 8, 0.6), rgba(10, 9, 8, 0));
+				background: linear-gradient(to bottom, rgba(14, 12, 9, 0.6), rgba(14, 12, 9, 0));
 			}
 			.brand-bar :global(.brand-logo) {
 				width: 28px;
@@ -125,10 +278,10 @@ const jsonLd = {
 				inset: 0;
 				background: linear-gradient(
 					to bottom,
-					rgba(10, 9, 8, 0.35) 0%,
-					rgba(10, 9, 8, 0.15) 30%,
-					rgba(10, 9, 8, 0.7) 78%,
-					rgba(10, 9, 8, 0.92) 100%
+					rgba(14, 12, 9, 0.4) 0%,
+					rgba(14, 12, 9, 0.12) 30%,
+					rgba(22, 19, 15, 0.72) 78%,
+					var(--bg) 100%
 				);
 				z-index: 1;
 			}
@@ -136,199 +289,232 @@ const jsonLd = {
 				position: relative;
 				z-index: 2;
 				width: 100%;
-				padding: 32px clamp(20px, 6vw, 64px) clamp(32px, 6vh, 72px);
+				padding: 32px clamp(20px, 6vw, 64px) clamp(40px, 8vh, 88px);
 				text-align: left;
 			}
 			.hero-label {
-				margin: 0 0 8px;
-				font-size: 0.8rem;
-				letter-spacing: 0.28em;
-				text-transform: uppercase;
-				color: #d8d2c9;
+				margin: 0 0 10px;
+				font-size: 0.78rem;
+				letter-spacing: 0.32em;
+				color: var(--accent);
 			}
 			.hero-title {
-				margin: 0 0 20px;
-				font-size: clamp(3rem, 16vw, 6rem);
+				margin: 0 0 24px;
+				font-size: clamp(3.2rem, 16vw, 7.5rem);
 				font-weight: 700;
-				letter-spacing: 0.04em;
+				letter-spacing: 0.1em;
 				line-height: 1;
 			}
 			.hero-meta {
 				margin: 0;
 				font-size: 0.95rem;
-				line-height: 1.8;
-				color: #ece7de;
+				line-height: 1.9;
+				color: var(--text);
+				font-variant-numeric: tabular-nums;
+			}
+			.hero-date {
+				font-size: 1.35rem;
+				font-weight: 600;
+				letter-spacing: 0.14em;
+			}
+			.hero-times {
+				color: var(--text-dim);
+				letter-spacing: 0.06em;
 			}
 			@media (min-width: 768px) {
-				.hero-content { max-width: 720px; }
+				.hero-content {
+					max-width: 900px;
+				}
 			}
 
-			.sr-only {
-				position: absolute;
-				width: 1px;
-				height: 1px;
-				padding: 0;
-				margin: -1px;
-				overflow: hidden;
-				clip: rect(0, 0, 0, 0);
-				white-space: nowrap;
-				border: 0;
-			}
-
-			.photos {
-				padding: 0;
-			}
+			/* ---- 写真：非対称配置 ---- */
 			.photo-list {
 				list-style: none;
+				margin: 0 auto;
+				padding: clamp(32px, 8vw, 96px) clamp(20px, 6vw, 64px);
+				max-width: 1240px;
+				display: flex;
+				flex-direction: column;
+				gap: clamp(24px, 6vw, 88px);
+			}
+			.photo-list li {
 				margin: 0;
-				padding: 0;
-				display: grid;
-				grid-template-columns: 1fr;
-				gap: 2px;
+			}
+			.photo-list li:nth-child(1) {
+				width: min(100%, 780px);
+				align-self: flex-start;
+			}
+			.photo-list li:nth-child(2) {
+				width: min(72%, 430px);
+				align-self: flex-end;
+			}
+			.photo-list li:nth-child(3) {
+				width: min(94%, 860px);
+				align-self: center;
 			}
 			.photo-list :global(img) {
 				display: block;
 				width: 100%;
 				height: auto;
 			}
-			@media (min-width: 768px) {
-				.photo-list { grid-template-columns: repeat(3, 1fr); }
-			}
 
+			/* ---- テキストセクション共通 ---- */
 			.content-section {
-				padding: clamp(40px, 8vh, 72px) clamp(20px, 6vw, 64px);
-				max-width: 640px;
+				padding: clamp(56px, 12vh, 150px) clamp(24px, 6vw, 64px);
+				max-width: 720px;
+				margin-inline: auto;
 			}
-			.content-section p {
-				line-height: 1.9;
-				font-size: 1.05rem;
+			.section-title {
+				margin: 0 0 36px;
+				font-size: 0.95rem;
+				font-weight: 600;
+				letter-spacing: 0.42em;
+				color: var(--text-dim);
+			}
+			.eyebrow {
+				margin: 0 0 24px;
+				font-size: 0.75rem;
+				font-weight: 600;
+				letter-spacing: 0.24em;
+				text-transform: uppercase;
+				color: var(--accent);
 			}
 
+			.concept {
+				text-align: center;
+			}
+			.concept p {
+				margin: 0;
+				font-size: clamp(1.1rem, 1rem + 0.9vw, 1.45rem);
+				line-height: 2.4;
+				letter-spacing: 0.05em;
+			}
+			.sp-only {
+				display: none;
+			}
+			@media (max-width: 480px) {
+				.sp-only {
+					display: inline;
+				}
+				.concept p {
+					font-size: 1rem;
+					letter-spacing: 0.03em;
+				}
+			}
+
+			.founder {
+				max-width: 600px;
+			}
+			.founder p {
+				margin: 0;
+				line-height: 2.3;
+				letter-spacing: 0.03em;
+			}
+
+			/* ---- 公演情報 ---- */
 			.info dl {
 				display: grid;
-				grid-template-columns: max-content 1fr;
-				column-gap: 24px;
-				row-gap: 16px;
-				margin: 0 0 24px;
+				grid-template-columns: 7em 1fr;
+				margin: 0;
+				font-variant-numeric: tabular-nums;
+			}
+			.info dt,
+			.info dd {
+				padding: 14px 0;
+				border-bottom: 1px solid var(--line);
+				margin: 0;
 			}
 			.info dt {
-				color: #6b6155;
+				color: var(--text-dim);
 				font-size: 0.85rem;
-				white-space: nowrap;
-				padding-top: 2px;
-			}
-			.info dd {
-				margin: 0;
-				font-size: 1rem;
+				padding-top: 17px;
 			}
 			.venue-link {
 				display: inline-block;
-				font-size: 0.9rem;
+				font-size: 0.85rem;
+				margin-top: 4px;
 			}
-		</style>
 
-		<style is:global>
-			body {
+			/* ---- チケット ---- */
+			.ticket {
+				text-align: center;
+			}
+			.sale-date {
+				margin: 0 0 28px;
+				letter-spacing: 0.04em;
+				font-variant-numeric: tabular-nums;
+			}
+			.cta {
+				display: inline-block;
+				background: var(--accent);
+				color: var(--bg-deep);
+				text-decoration: none;
+				font-weight: 700;
+				letter-spacing: 0.1em;
+				padding: 18px 46px;
+				border-radius: 4px;
+			}
+			.cta:hover {
+				background: var(--accent-strong);
+			}
+			.cta:focus-visible {
+				outline: 2px solid var(--text);
+				outline-offset: 3px;
+			}
+			.ticket-note {
+				margin: 16px 0 0;
+				font-size: 0.8rem;
+				color: var(--text-dim);
+			}
+
+			/* ---- リンク ---- */
+			.links ul {
+				list-style: none;
 				margin: 0;
-				font-family: -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif;
-				color: #201c17;
-				line-height: 1.7;
+				padding: 0;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 12px 32px;
 			}
-			h2 {
-				font-size: 1.3rem;
-				margin: 0 0 20px;
+			.dim {
+				color: var(--text-dim);
+			}
+
+			/* ---- Footer ---- */
+			footer {
+				border-top: 1px solid var(--line);
+				padding: 40px clamp(24px, 6vw, 64px) calc(48px + env(safe-area-inset-bottom));
+				text-align: center;
+				font-size: 0.8rem;
+				color: var(--text-dim);
+			}
+			footer p {
+				margin: 6px 0;
+			}
+
+			/* ---- 固定TICKET導線 ---- */
+			.ticket-pill {
+				position: fixed;
+				right: 16px;
+				bottom: calc(16px + env(safe-area-inset-bottom));
+				z-index: 50;
+				background: var(--accent);
+				color: var(--bg-deep);
+				text-decoration: none;
+				font-size: 0.78rem;
+				font-weight: 700;
+				letter-spacing: 0.14em;
+				padding: 13px 22px;
+				border-radius: 999px;
+				box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+			}
+			.ticket-pill:hover {
+				background: var(--accent-strong);
+			}
+			.ticket-pill:focus-visible {
+				outline: 2px solid var(--text);
+				outline-offset: 3px;
 			}
 		</style>
-
-		<main>
-			<section aria-label="写真または映像" class="photos">
-				<h2 class="sr-only">写真</h2>
-				<ul class="photo-list">
-					{photos.map((photo) => (
-						<li>
-							<Image
-								src={photo.src}
-								alt={photo.alt}
-								widths={[480, 768, 1080]}
-								sizes="(min-width: 768px) 33vw, 100vw"
-								loading="eager"
-							/>
-						</li>
-					))}
-				</ul>
-			</section>
-
-			<section aria-label="ROOMのコンセプト" class="content-section">
-				<h2 class="sr-only">ROOMのコンセプト</h2>
-				<p>
-					音を鳴らしている姿。<br />
-					その姿から伝わる熱は、必要としている誰かに届くはずです。
-				</p>
-			</section>
-
-			<section aria-label="Founder's Note" class="content-section">
-				<h2 class="sr-only">Founder's Note</h2>
-				<p>
-					だから、この夜をつくります。<br />
-					鳴らした音を、届くべき人へ。<br />
-					それを目の当たりにすれば、自分だけじゃないと思えるかもしれません。
-				</p>
-			</section>
-
-			<section aria-label="公演情報" class="content-section info">
-				<h2>公演情報</h2>
-				<dl>
-					<dt>公演名</dt>
-					<dd>ROOM</dd>
-					<dt>主催</dt>
-					<dd>{eventInfo.organizer}</dd>
-					<dt>日程</dt>
-					<dd>{eventInfo.date}</dd>
-					<dt>OPEN</dt>
-					<dd>{eventInfo.open}</dd>
-					<dt>START</dt>
-					<dd>{eventInfo.start}</dd>
-					<dt>終演目安</dt>
-					<dd>{eventInfo.endEstimate}</dd>
-					<dt>会場</dt>
-					<dd>
-						{eventInfo.venue}<br />
-						<a class="venue-link" href={mapUrl} target="_blank" rel="noopener">地図を見る（Google Maps）</a>
-					</dd>
-					<dt>料金</dt>
-					<dd>学生 1,000円 / 一般 1,500円 / 小人 500円</dd>
-					<dt>当日券</dt>
-					<dd>販売あり（前売り残数がある場合のみ）</dd>
-					<dt>出演者</dt>
-					<dd>後日公開</dd>
-					<dt>セットリスト</dt>
-					<dd>後日公開</dd>
-				</dl>
-			</section>
-
-			<section aria-label="チケット導線" class="content-section">
-				<h2>チケット</h2>
-				<p>販売開始：2026年8月22日〜</p>
-				<p>
-					<a href="https://teket.jp/19130/74082">チケットを購入する（teket）</a>
-				</p>
-				<p>（8月22日の販売開始まではページ未公開の可能性あり。売切/当日券の表示方針はPhase 8で検討）</p>
-			</section>
-
-			<section aria-label="Instagram・公式サイトへの導線" class="content-section">
-				<h2>最新情報・問い合わせ</h2>
-				<ul>
-					<li><a href="https://www.instagram.com/ryuikeion/">Instagram</a></li>
-					<li><a href="https://ryuik-on.github.io/ryuik-on-official">公式サイト</a></li>
-					<li>問い合わせ先（準備中）</li>
-				</ul>
-			</section>
-		</main>
-
-		<footer>
-			<p>{eventInfo.organizer}</p>
-			<p>&copy; 2026 {eventInfo.organizer}</p>
-			<p><a href="#top">ページ先頭へ戻る</a></p>
-		</footer>
 	</body>
 </html>
