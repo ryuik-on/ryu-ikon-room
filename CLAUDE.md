@@ -54,7 +54,7 @@
 
 ## Technology status
 
-現時点でv2のフレームワーク、パッケージ管理、build/lintコマンドは未決定。Astroは候補の一つであり、決定事項ではない。依存関係を追加する前に比較案と変更計画を提示し、人間の承認を得る。
+v2のフレームワークはAstroに決定（2026-07-23、Phase 2）。パッケージ管理はnpm、base pathは`astro.config.mjs`で`/ryu-ikon-room/`を設定済み。開発サーバーは`astro dev --background`で起動し、`astro dev stop` / `astro dev status` / `astro dev logs`で管理する（Astro CLI標準）。デプロイ方式（GitHub Actions化を含むPages設定変更）はPhase 13で人間の承認を得てから決定する。新規に依存関係（Astroインテグレーション等）を追加する前は、引き続き比較案と変更計画を提示し承認を得る。
 
 ## Archive
 

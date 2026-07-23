@@ -1,0 +1,110 @@
+---
+const eventInfo = {
+  organizer: "琉球大学医学部軽音部（Ryuik-on）",
+  date: "2026年11月22日（日）",
+  open: "16:00",
+  start: "17:00",
+  endEstimate: "20:00頃",
+  venue: "那覇市ぶんかテンブス館 テンブスホール",
+};
+---
+
+<html lang="ja">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>ROOM｜{eventInfo.organizer}</title>
+	</head>
+	<body>
+		<!-- Phase 3: 無装飾ワイヤーフレーム。色・写真・演出なし。情報順と導線の検証専用。 -->
+
+		<header>
+			<p>{eventInfo.organizer}</p>
+			<p>音楽公演</p>
+			<h1>ROOM</h1>
+			<p>{eventInfo.date}</p>
+			<p>（Heroコピー・ロゴ・Hero素材は未定。Phase 4で検討）</p>
+		</header>
+
+		<main>
+			<section aria-label="写真または映像">
+				<h2>写真または映像</h2>
+				<p>[写真/映像プレースホルダー]</p>
+				<p>（採用素材・点数・順序は未定。Phase 5で検討）</p>
+			</section>
+
+			<section aria-label="ROOMのコンセプト">
+				<h2>ROOMのコンセプト</h2>
+				<p>
+					奏者が、それぞれの日常で<br />
+					「これでいいんだろうか」と迷いながらも必死に音を鳴らし、<br />
+					その熱を、必要としている人へまっすぐ届ける。
+				</p>
+			</section>
+
+			<section aria-label="Founder's Note">
+				<h2>Founder's Note（下書き・未確定）</h2>
+				<p>
+					だから、この夜をつくります。<br />
+					必死に鳴らした音を、<br />
+					届くべき人へ、まっすぐ渡すために。<br />
+					立ち止まって聴いてくれたら、それだけで、<br />
+					自分だけじゃないと思えるかもしれません。
+				</p>
+				<p>（v1掲載文をそのまま暫定表示。最終文章は再検討中）</p>
+			</section>
+
+			<section aria-label="公演情報">
+				<h2>公演情報</h2>
+				<dl>
+					<dt>公演名</dt>
+					<dd>ROOM</dd>
+					<dt>主催</dt>
+					<dd>{eventInfo.organizer}</dd>
+					<dt>日程</dt>
+					<dd>{eventInfo.date}</dd>
+					<dt>OPEN</dt>
+					<dd>{eventInfo.open}</dd>
+					<dt>START</dt>
+					<dd>{eventInfo.start}</dd>
+					<dt>終演目安</dt>
+					<dd>{eventInfo.endEstimate}</dd>
+					<dt>会場</dt>
+					<dd>{eventInfo.venue}</dd>
+					<dt>料金</dt>
+					<dd>学生 1,000円 / 一般 1,500円 / 小人 500円</dd>
+					<dt>当日券</dt>
+					<dd>販売あり（前売り残数がある場合のみ）</dd>
+					<dt>出演者</dt>
+					<dd>後日公開</dd>
+					<dt>セットリスト</dt>
+					<dd>後日公開</dd>
+				</dl>
+			</section>
+
+			<section aria-label="チケット導線">
+				<h2>チケット</h2>
+				<p>販売開始：2026年8月22日〜</p>
+				<p>
+					<a href="https://teket.jp/19130/74082">チケットを購入する（teket）</a>
+				</p>
+				<p>（8月22日の販売開始まではページ未公開の可能性あり。売切/当日券の表示方針はPhase 8で検討）</p>
+			</section>
+
+			<section aria-label="Instagram・公式サイトへの導線">
+				<h2>最新情報・問い合わせ</h2>
+				<ul>
+					<li><a href="https://www.instagram.com/ryuikeion/">Instagram</a></li>
+					<li><a href="https://ryuik-on.github.io/ryuik-on-official">公式サイト</a></li>
+					<li>問い合わせ先（準備中）</li>
+				</ul>
+			</section>
+		</main>
+
+		<footer>
+			<p>{eventInfo.organizer}</p>
+			<p>&copy; 2026 {eventInfo.organizer}</p>
+			<p><a href="#top">ページ先頭へ戻る</a></p>
+		</footer>
+	</body>
+</html>
