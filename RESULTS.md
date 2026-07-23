@@ -61,7 +61,7 @@
 - No framework or dependency installation/update.
 - No image generation, deletion, or compression.
 - No edits to archived v1 implementation after the byte-identical move.
-- No merge to `main`, Pages setting change, deploy, remote push, force push, or history rewrite.
+- No merge to `main`, Pages setting change, deploy, force push, or history rewrite.
 
 ### Commits
 
@@ -82,7 +82,7 @@ The first commit also contains the byte-identical file moves because `git mv` st
 
 ### Remote state
 
-All tags, branches, and commits created by this work remain local. Nothing was pushed.
+After explicit user authorization and GitHub browser authentication, `rebuild/room-v2` and `room-v1-archive` were pushed to `origin`. `main` was not changed.
 
 ### 2026-07-23 push attempt
 
@@ -91,3 +91,10 @@ All tags, branches, and commits created by this work remain local. Nothing was p
 - GitHub CLI is not installed, so no alternate authenticated CLI session was available.
 - A post-failure remote check confirmed that only `origin/main` exists; no partial tag or branch was created.
 - Local commits, tag, branch, and clean working tree were preserved.
+
+### 2026-07-23 authenticated push
+
+- Authenticated to GitHub as `ryuik-on` using GitHub CLI's browser device flow and macOS keyring storage.
+- Pushed `rebuild/room-v2` and configured it to track `origin/rebuild/room-v2`.
+- Pushed `room-v1-archive` without overwriting an existing tag.
+- Confirmed `origin/main` still points to the preserved v1 commit `2b825ba`.

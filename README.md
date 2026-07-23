@@ -8,7 +8,7 @@
 - v2準備作業は`rebuild/room-v2`で実施
 - v1のファイルはこのブランチの`archive/room-v1/`へ退避
 - v2の本実装、フレームワーク導入、公開切替は未着手
-- remoteへのタグ・ブランチ・commitのpushは未実施
+- `room-v1-archive`タグと`rebuild/room-v2`ブランチはremoteへバックアップ済み
 
 ## 最初に読む資料
 

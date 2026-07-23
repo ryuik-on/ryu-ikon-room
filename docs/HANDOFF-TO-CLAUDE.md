@@ -24,7 +24,7 @@
 ## 旧サイトの保存状態
 
 - 公開時点のcommit: `2b825ba377d566730f70e664e940d0a50ad9da66`
-- 保存タグ: `room-v1-archive`（ローカルのみ）
+- 保存タグ: `room-v1-archive`（local/remote双方）
 - branch内退避: `archive/room-v1/`
 - `.git`、README、公開設定は移動していない
 - リポジトリ内にActions/Pages設定ファイルは元から存在しない
@@ -33,11 +33,11 @@
 
 ## タグとbranchの状態
 
-- remote branch: `origin/main`のみ
+- remote branch: `origin/main`、`origin/rebuild/room-v2`
 - local branch: `main`、`rebuild/room-v2`
-- remote tag: なし（調査時）
+- remote tag: `room-v1-archive`
 - local tag: `room-v1-archive`
-- push: 未実施
+- push: 保存タグと再構築ブランチをバックアップ済み
 
 ## 変更ファイル
 
@@ -173,12 +173,10 @@ find docs -maxdepth 2 -type f -print | sort
 
 v2のbuild/lintコマンドは未定義です。存在しないコマンドを実行前提にしないでください。
 
-## remoteへpushされていない変更
+## remote同期状態
 
-次はすべてローカルのみです。
+- `room-v1-archive`タグ: `origin`へpush済み
+- `rebuild/room-v2`branch: `origin`へpush済み
+- `main`: 変更なし（`2b825ba`）
 
-- `room-v1-archive`タグ
-- `rebuild/room-v2`branch
-- 退避、docs、CLAUDE.md、README.md、RESULTS.mdのcommit
-
-remoteへ送る場合も、まず人間が差分を確認し、明示承認してから行ってください。
+今後の追加push、merge、公開切替についても、まず人間が差分を確認し、明示承認してから行ってください。
