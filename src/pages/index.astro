@@ -1,4 +1,8 @@
 ---
+import { Image } from "astro:assets";
+import heroPhoto from "../assets/hero/hero-photo.jpg";
+import heroLogo from "../assets/hero/ryuikon-logo.png";
+
 const eventInfo = {
   organizer: "琉球大学医学部軽音部（Ryuik-on）",
   date: "2026年11月22日（日）",
@@ -16,15 +20,100 @@ const eventInfo = {
 		<title>ROOM｜{eventInfo.organizer}</title>
 	</head>
 	<body>
-		<!-- Phase 3: 無装飾ワイヤーフレーム。色・写真・演出なし。情報順と導線の検証専用。 -->
+		<!-- Phase 4: Hero。IMG_9512（clude_room提供・部内撮影で使用可確認済み）とRyuik-onロゴを使用。 -->
+		<!-- ROOM_KVB_solo_FINAL.pngのレイアウトを踏襲。文字は画像に焼き込まず実テキストで重ねる。 -->
 
-		<header>
-			<p>{eventInfo.organizer}</p>
-			<p>音楽公演</p>
-			<h1>ROOM</h1>
-			<p>{eventInfo.date}</p>
-			<p>（Heroコピー・ロゴ・Hero素材は未定。Phase 4で検討）</p>
+		<header class="hero">
+			<Image
+				src={heroPhoto}
+				alt=""
+				class="hero-bg"
+				widths={[480, 768, 1080, 1440]}
+				sizes="100vw"
+				loading="eager"
+				fetchpriority="high"
+			/>
+			<div class="hero-scrim" aria-hidden="true"></div>
+			<div class="hero-content">
+				<Image src={heroLogo} alt="Ryuik-on（琉球大学医学部軽音部）" class="hero-logo" width={96} height={114} />
+				<p class="hero-label">ONE-MAN LIVE</p>
+				<h1 class="hero-title">ROOM</h1>
+				<p class="hero-meta">
+					{eventInfo.date}<br />
+					{eventInfo.venue}<br />
+					OPEN {eventInfo.open} / START {eventInfo.start}
+				</p>
+			</div>
 		</header>
+
+		<style>
+			.hero {
+				position: relative;
+				min-height: 100svh;
+				display: flex;
+				align-items: flex-end;
+				overflow: hidden;
+				color: #f5f3f0;
+			}
+			.hero :global(.hero-bg) {
+				position: absolute;
+				inset: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				object-position: 60% 30%;
+				z-index: 0;
+			}
+			.hero-scrim {
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(
+					to bottom,
+					rgba(10, 9, 8, 0.55) 0%,
+					rgba(10, 9, 8, 0.25) 35%,
+					rgba(10, 9, 8, 0.65) 75%,
+					rgba(10, 9, 8, 0.9) 100%
+				);
+				z-index: 1;
+			}
+			.hero-content {
+				position: relative;
+				z-index: 2;
+				width: 100%;
+				padding: 32px clamp(20px, 6vw, 64px) clamp(32px, 6vh, 72px);
+				text-align: center;
+			}
+			.hero-content :global(.hero-logo) {
+				width: 72px;
+				height: auto;
+				margin: 0 auto 16px;
+				display: block;
+			}
+			.hero-label {
+				margin: 0 0 8px;
+				font-size: 0.8rem;
+				letter-spacing: 0.28em;
+				text-transform: uppercase;
+				color: #d8d2c9;
+			}
+			.hero-title {
+				margin: 0 0 20px;
+				font-size: clamp(3rem, 16vw, 6rem);
+				font-weight: 700;
+				letter-spacing: 0.04em;
+				line-height: 1;
+			}
+			.hero-meta {
+				margin: 0;
+				font-size: 0.95rem;
+				line-height: 1.8;
+				color: #ece7de;
+			}
+			@media (min-width: 768px) {
+				.hero-content { text-align: left; max-width: 720px; }
+				.hero-content :global(.hero-logo) { margin: 0 0 20px; }
+			}
+		</style>
 
 		<main>
 			<section aria-label="写真または映像">
@@ -34,7 +123,7 @@ const eventInfo = {
 			</section>
 
 			<section aria-label="ROOMのコンセプト">
-				<h2>ROOMのコンセプト</h2>
+				<h2>ROOMのコンセプト（暫定・修正予定）</h2>
 				<p>
 					奏者が、それぞれの日常で<br />
 					「これでいいんだろうか」と迷いながらも必死に音を鳴らし、<br />
