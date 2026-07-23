@@ -369,38 +369,28 @@ const jsonLd = {
 				}
 			}
 
-			/* ---- 写真 ---- */
+			/* ---- 写真：3枚とも同じ比率・同じサイズ ---- */
 			.photo-list {
 				list-style: none;
 				margin: 0 auto;
 				padding: clamp(32px, 8vw, 96px) clamp(20px, 6vw, 64px);
 				max-width: 1240px;
-				display: flex;
-				flex-direction: column;
-				gap: clamp(20px, 5vw, 88px);
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: clamp(16px, 4vw, 28px);
 			}
 			.photo-list li {
 				margin: 0;
-				width: 100%;
 			}
 			.photo-list :global(img) {
 				display: block;
 				width: 100%;
 				height: auto;
 			}
-			/* 非対称配置はデスクトップのみ */
 			@media (min-width: 768px) {
-				.photo-list li:nth-child(1) {
-					width: min(100%, 780px);
-					align-self: flex-start;
-				}
-				.photo-list li:nth-child(2) {
-					width: min(72%, 430px);
-					align-self: flex-end;
-				}
-				.photo-list li:nth-child(3) {
-					width: min(94%, 860px);
-					align-self: center;
+				.photo-list {
+					grid-template-columns: repeat(3, 1fr);
+					align-items: center;
 				}
 			}
 
