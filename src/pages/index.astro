@@ -143,6 +143,11 @@ const jsonLd = {
 				</p>
 			</section>
 
+			<div class="reveal">
+				<p class="reveal-lead">その音が満ちる場所へ。</p>
+				<p class="reveal-title">ROOM</p>
+			</div>
+
 			<section aria-label="公演情報" class="content-section info">
 				<h2 class="section-title">公演情報</h2>
 				<dl>
@@ -444,6 +449,24 @@ const jsonLd = {
 				margin: 0;
 				line-height: 2.3;
 				letter-spacing: 0.03em;
+			}
+
+			/* ---- ROOM再登場（Founder's Noteの後の演出ビート） ---- */
+			.reveal {
+				text-align: center;
+				padding: clamp(40px, 10vh, 100px) clamp(24px, 6vw, 64px) clamp(64px, 14vh, 140px);
+			}
+			.reveal-lead {
+				margin: 0 0 16px;
+				font-size: 0.85rem;
+				letter-spacing: 0.2em;
+				color: var(--text-dim);
+			}
+			.reveal-title {
+				margin: 0;
+				font-size: clamp(2.6rem, 12vw, 5rem);
+				font-weight: 700;
+				letter-spacing: 0.1em;
 			}
 
 			/* ---- 公演情報 ---- */
