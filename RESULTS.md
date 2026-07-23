@@ -83,3 +83,11 @@ The first commit also contains the byte-identical file moves because `git mv` st
 ### Remote state
 
 All tags, branches, and commits created by this work remain local. Nothing was pushed.
+
+### 2026-07-23 push attempt
+
+- User authorized pushing `room-v1-archive` and `rebuild/room-v2`.
+- HTTPS push failed before creating any remote refs because this environment has no GitHub credentials available (`could not read Username`).
+- GitHub CLI is not installed, so no alternate authenticated CLI session was available.
+- A post-failure remote check confirmed that only `origin/main` exists; no partial tag or branch was created.
+- Local commits, tag, branch, and clean working tree were preserved.
