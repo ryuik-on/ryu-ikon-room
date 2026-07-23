@@ -9,7 +9,7 @@ import photo03 from "../assets/photos/photo-03.jpg";
 // 素材はすべて部内撮影・使用可確認済み（facts-and-content.md参照）
 const photos = [
   { src: photo01, alt: "マイクに向かって手を伸ばすボーカルと、それに応える観客たち" },
-  { src: photo02, alt: "目を閉じてギターを弾く奏者" },
+  { src: photo02, alt: "後ろ姿でステージに立つボーカルと、向き合う演奏者たち" },
   { src: photo03, alt: "両手を上げて盛り上がる観客と、それを見守る奏者" },
 ];
 
@@ -382,20 +382,11 @@ const jsonLd = {
 			.photo-list li {
 				margin: 0;
 				width: 100%;
-				aspect-ratio: 4 / 5;
-				overflow: hidden;
 			}
 			.photo-list :global(img) {
 				display: block;
 				width: 100%;
-				height: 100%;
-				object-fit: cover;
-			}
-			.photo-list li:nth-child(1) :global(img) {
-				object-position: 50% 25%;
-			}
-			.photo-list li:nth-child(3) :global(img) {
-				object-position: 50% 65%;
+				height: auto;
 			}
 			/* 非対称配置はデスクトップのみ */
 			@media (min-width: 768px) {
