@@ -151,7 +151,7 @@ const jsonLd = {
 				<h2 class="section-title">チケット</h2>
 				<p class="sale-date">前売券は <time datetime="2026-08-22">2026年8月22日（土）</time> 販売開始</p>
 				<p>
-					<a class="cta" href="https://teket.jp/19130/74082">チケットを購入する</a>
+					<a class="cta" href="https://teket.jp/19130/74082">チケットを購入する<span aria-hidden="true">→</span></a>
 				</p>
 				<p class="ticket-note">teket（外部サイト）が開きます</p>
 			</section>
@@ -176,13 +176,11 @@ const jsonLd = {
 		<style is:global>
 			:root {
 				color-scheme: dark;
-				--bg: #16130f;
-				--bg-deep: #0e0c09;
-				--text: #ede7dc;
-				--text-dim: #a89e90;
-				--accent: #d9a961;
-				--accent-strong: #e6bd7c;
-				--line: #332d24;
+				--bg: #131313;
+				--bg-deep: #000000;
+				--text: #f2f2f0;
+				--text-dim: #8a8a86;
+				--line: #333331;
 			}
 			html {
 				background: var(--bg);
@@ -195,14 +193,14 @@ const jsonLd = {
 				line-height: 1.9;
 			}
 			a {
-				color: var(--accent);
+				color: var(--text);
 			}
 			a:focus-visible {
-				outline: 2px solid var(--accent);
+				outline: 2px solid var(--text);
 				outline-offset: 3px;
 			}
 			::selection {
-				background: var(--accent);
+				background: var(--text);
 				color: var(--bg-deep);
 			}
 		</style>
@@ -213,7 +211,7 @@ const jsonLd = {
 				left: -9999px;
 				top: 0;
 				z-index: 100;
-				background: var(--accent);
+				background: var(--text);
 				color: var(--bg-deep);
 				padding: 10px 18px;
 			}
@@ -296,7 +294,7 @@ const jsonLd = {
 				margin: 0 0 10px;
 				font-size: 0.78rem;
 				letter-spacing: 0.32em;
-				color: var(--accent);
+				color: var(--text-dim);
 			}
 			.hero-title {
 				margin: 0 0 24px;
@@ -377,7 +375,7 @@ const jsonLd = {
 				font-weight: 600;
 				letter-spacing: 0.24em;
 				text-transform: uppercase;
-				color: var(--accent);
+				color: var(--text-dim);
 			}
 
 			.concept {
@@ -445,17 +443,20 @@ const jsonLd = {
 				font-variant-numeric: tabular-nums;
 			}
 			.cta {
-				display: inline-block;
-				background: var(--accent);
-				color: var(--bg-deep);
+				display: inline-flex;
+				align-items: center;
+				gap: 12px;
+				background: transparent;
+				border: 1px solid var(--text);
+				color: var(--text);
 				text-decoration: none;
-				font-weight: 700;
+				font-weight: 600;
 				letter-spacing: 0.1em;
-				padding: 18px 46px;
-				border-radius: 4px;
+				padding: 18px 40px;
 			}
 			.cta:hover {
-				background: var(--accent-strong);
+				background: var(--text);
+				color: var(--bg-deep);
 			}
 			.cta:focus-visible {
 				outline: 2px solid var(--text);
@@ -498,18 +499,17 @@ const jsonLd = {
 				right: 16px;
 				bottom: calc(16px + env(safe-area-inset-bottom));
 				z-index: 50;
-				background: var(--accent);
+				background: var(--text);
 				color: var(--bg-deep);
 				text-decoration: none;
 				font-size: 0.78rem;
 				font-weight: 700;
 				letter-spacing: 0.14em;
 				padding: 13px 22px;
-				border-radius: 999px;
 				box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
 			}
 			.ticket-pill:hover {
-				background: var(--accent-strong);
+				background: var(--text-dim);
 			}
 			.ticket-pill:focus-visible {
 				outline: 2px solid var(--text);
