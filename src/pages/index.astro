@@ -61,7 +61,7 @@ const eventInfo = {
 		<style>
 			.hero {
 				position: relative;
-				min-height: 100svh;
+				min-height: min(100svh, 820px);
 				display: flex;
 				align-items: flex-end;
 				overflow: hidden;
@@ -185,7 +185,7 @@ const eventInfo = {
 								alt={photo.alt}
 								widths={[480, 768, 1080]}
 								sizes="(min-width: 768px) 33vw, 100vw"
-								loading="lazy"
+								loading="eager"
 							/>
 						</li>
 					))}
