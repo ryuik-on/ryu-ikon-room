@@ -2,6 +2,15 @@
 import { Image } from "astro:assets";
 import heroPhoto from "../assets/hero/hero-photo.jpg";
 import heroLogo from "../assets/hero/ryuikon-logo.png";
+import photo01 from "../assets/photos/photo-01.jpg";
+import photo02 from "../assets/photos/photo-02.jpg";
+import photo03 from "../assets/photos/photo-03.jpg";
+
+const photos = [
+  { src: photo01, alt: "マイクに向かって手を伸ばすボーカルと、それに応える観客たち" },
+  { src: photo02, alt: "目を閉じてギターを弾く奏者" },
+  { src: photo03, alt: "両手を上げて盛り上がる観客と、それを見守る奏者" },
+];
 
 const eventInfo = {
   organizer: "琉球大学医学部軽音部（Ryuik-on）",
@@ -131,13 +140,56 @@ const eventInfo = {
 			@media (min-width: 768px) {
 				.hero-content { max-width: 720px; }
 			}
+
+			.sr-only {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0, 0, 0, 0);
+				white-space: nowrap;
+				border: 0;
+			}
+
+			.photos {
+				padding: 0;
+			}
+			.photo-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 2px;
+			}
+			.photo-list :global(img) {
+				display: block;
+				width: 100%;
+				height: auto;
+			}
+			@media (min-width: 768px) {
+				.photo-list { grid-template-columns: repeat(3, 1fr); }
+			}
 		</style>
 
 		<main>
-			<section aria-label="写真または映像">
-				<h2>写真または映像</h2>
-				<p>[写真/映像プレースホルダー]</p>
-				<p>（採用素材・点数・順序は未定。Phase 5で検討）</p>
+			<section aria-label="写真または映像" class="photos">
+				<h2 class="sr-only">写真</h2>
+				<ul class="photo-list">
+					{photos.map((photo) => (
+						<li>
+							<Image
+								src={photo.src}
+								alt={photo.alt}
+								widths={[480, 768, 1080]}
+								sizes="(min-width: 768px) 33vw, 100vw"
+								loading="lazy"
+							/>
+						</li>
+					))}
+				</ul>
 			</section>
 
 			<section aria-label="ROOMのコンセプト">
