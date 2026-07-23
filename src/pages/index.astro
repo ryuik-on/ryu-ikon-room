@@ -20,10 +20,14 @@ const eventInfo = {
 		<title>ROOM｜{eventInfo.organizer}</title>
 	</head>
 	<body>
-		<!-- Phase 4: Hero。IMG_9512（clude_room提供・部内撮影で使用可確認済み）とRyuik-onロゴを使用。 -->
-		<!-- ROOM_KVB_solo_FINAL.pngのレイアウトを踏襲。文字は画像に焼き込まず実テキストで重ねる。 -->
+		<!-- Phase 4: Hero。IMG_9599（claude_room提供・部内撮影で使用可確認済み、公式サイトROOMブロックと同一素材）とRyuik-onロゴを使用。 -->
+		<!-- 公式サイト（ryuik-on.github.io）のROOM告知ブロックにレイアウトを揃える。文字は画像に焼き込まず実テキストで重ねる。 -->
 
 		<header class="hero">
+			<div class="brand-bar">
+				<Image src={heroLogo} alt="" class="brand-logo" width={40} height={48} />
+				<span class="brand-name">Ryuik-on</span>
+			</div>
 			<Image
 				src={heroPhoto}
 				alt=""
@@ -35,7 +39,6 @@ const eventInfo = {
 			/>
 			<div class="hero-scrim" aria-hidden="true"></div>
 			<div class="hero-content">
-				<Image src={heroLogo} alt="Ryuik-on（琉球大学医学部軽音部）" class="hero-logo" width={96} height={114} />
 				<p class="hero-label">ONE-MAN LIVE</p>
 				<h1 class="hero-title">ROOM</h1>
 				<p class="hero-meta">
@@ -55,13 +58,35 @@ const eventInfo = {
 				overflow: hidden;
 				color: #f5f3f0;
 			}
+			.brand-bar {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				z-index: 3;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 14px clamp(20px, 6vw, 64px);
+				background: linear-gradient(to bottom, rgba(10, 9, 8, 0.6), rgba(10, 9, 8, 0));
+			}
+			.brand-bar :global(.brand-logo) {
+				width: 28px;
+				height: auto;
+				display: block;
+			}
+			.brand-name {
+				font-size: 0.95rem;
+				font-weight: 700;
+				letter-spacing: 0.03em;
+			}
 			.hero :global(.hero-bg) {
 				position: absolute;
 				inset: 0;
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
-				object-position: 60% 30%;
+				object-position: 50% 35%;
 				z-index: 0;
 			}
 			.hero-scrim {
@@ -69,10 +94,10 @@ const eventInfo = {
 				inset: 0;
 				background: linear-gradient(
 					to bottom,
-					rgba(10, 9, 8, 0.55) 0%,
-					rgba(10, 9, 8, 0.25) 35%,
-					rgba(10, 9, 8, 0.65) 75%,
-					rgba(10, 9, 8, 0.9) 100%
+					rgba(10, 9, 8, 0.35) 0%,
+					rgba(10, 9, 8, 0.15) 30%,
+					rgba(10, 9, 8, 0.7) 78%,
+					rgba(10, 9, 8, 0.92) 100%
 				);
 				z-index: 1;
 			}
@@ -81,13 +106,7 @@ const eventInfo = {
 				z-index: 2;
 				width: 100%;
 				padding: 32px clamp(20px, 6vw, 64px) clamp(32px, 6vh, 72px);
-				text-align: center;
-			}
-			.hero-content :global(.hero-logo) {
-				width: 72px;
-				height: auto;
-				margin: 0 auto 16px;
-				display: block;
+				text-align: left;
 			}
 			.hero-label {
 				margin: 0 0 8px;
@@ -110,8 +129,7 @@ const eventInfo = {
 				color: #ece7de;
 			}
 			@media (min-width: 768px) {
-				.hero-content { text-align: left; max-width: 720px; }
-				.hero-content :global(.hero-logo) { margin: 0 0 20px; }
+				.hero-content { max-width: 720px; }
 			}
 		</style>
 
