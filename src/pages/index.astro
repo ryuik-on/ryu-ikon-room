@@ -20,6 +20,27 @@ const eventInfo = {
   endEstimate: "20:00頃",
   venue: "那覇市ぶんかテンブス館 テンブスホール",
 };
+
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(eventInfo.venue)}`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MusicEvent",
+  name: "ROOM",
+  startDate: "2026-11-22T17:00:00+09:00",
+  endDate: "2026-11-22T20:00:00+09:00",
+  doorTime: "2026-11-22T16:00:00+09:00",
+  eventStatus: "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  location: {
+    "@type": "Place",
+    name: eventInfo.venue,
+  },
+  organizer: {
+    "@type": "Organization",
+    name: eventInfo.organizer,
+  },
+};
 ---
 
 <html lang="ja">
@@ -27,6 +48,7 @@ const eventInfo = {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>ROOM｜{eventInfo.organizer}</title>
+		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	</head>
 	<body>
 		<!-- Phase 4: Hero。IMG_9599（claude_room提供・部内撮影で使用可確認済み、公式サイトROOMブロックと同一素材）とRyuik-onロゴを使用。 -->
@@ -172,6 +194,50 @@ const eventInfo = {
 			@media (min-width: 768px) {
 				.photo-list { grid-template-columns: repeat(3, 1fr); }
 			}
+
+			.content-section {
+				padding: clamp(40px, 8vh, 72px) clamp(20px, 6vw, 64px);
+				max-width: 640px;
+			}
+			.content-section p {
+				line-height: 1.9;
+				font-size: 1.05rem;
+			}
+
+			.info dl {
+				display: grid;
+				grid-template-columns: max-content 1fr;
+				column-gap: 24px;
+				row-gap: 16px;
+				margin: 0 0 24px;
+			}
+			.info dt {
+				color: #6b6155;
+				font-size: 0.85rem;
+				white-space: nowrap;
+				padding-top: 2px;
+			}
+			.info dd {
+				margin: 0;
+				font-size: 1rem;
+			}
+			.venue-link {
+				display: inline-block;
+				font-size: 0.9rem;
+			}
+		</style>
+
+		<style is:global>
+			body {
+				margin: 0;
+				font-family: -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif;
+				color: #201c17;
+				line-height: 1.7;
+			}
+			h2 {
+				font-size: 1.3rem;
+				margin: 0 0 20px;
+			}
 		</style>
 
 		<main>
@@ -192,7 +258,7 @@ const eventInfo = {
 				</ul>
 			</section>
 
-			<section aria-label="ROOMのコンセプト">
+			<section aria-label="ROOMのコンセプト" class="content-section">
 				<h2 class="sr-only">ROOMのコンセプト</h2>
 				<p>
 					音を鳴らしている姿。<br />
@@ -200,7 +266,7 @@ const eventInfo = {
 				</p>
 			</section>
 
-			<section aria-label="Founder's Note">
+			<section aria-label="Founder's Note" class="content-section">
 				<h2 class="sr-only">Founder's Note</h2>
 				<p>
 					だから、この夜をつくります。<br />
@@ -209,7 +275,7 @@ const eventInfo = {
 				</p>
 			</section>
 
-			<section aria-label="公演情報">
+			<section aria-label="公演情報" class="content-section info">
 				<h2>公演情報</h2>
 				<dl>
 					<dt>公演名</dt>
@@ -225,7 +291,10 @@ const eventInfo = {
 					<dt>終演目安</dt>
 					<dd>{eventInfo.endEstimate}</dd>
 					<dt>会場</dt>
-					<dd>{eventInfo.venue}</dd>
+					<dd>
+						{eventInfo.venue}<br />
+						<a class="venue-link" href={mapUrl} target="_blank" rel="noopener">地図を見る（Google Maps）</a>
+					</dd>
 					<dt>料金</dt>
 					<dd>学生 1,000円 / 一般 1,500円 / 小人 500円</dd>
 					<dt>当日券</dt>
@@ -237,7 +306,7 @@ const eventInfo = {
 				</dl>
 			</section>
 
-			<section aria-label="チケット導線">
+			<section aria-label="チケット導線" class="content-section">
 				<h2>チケット</h2>
 				<p>販売開始：2026年8月22日〜</p>
 				<p>
@@ -246,7 +315,7 @@ const eventInfo = {
 				<p>（8月22日の販売開始まではページ未公開の可能性あり。売切/当日券の表示方針はPhase 8で検討）</p>
 			</section>
 
-			<section aria-label="Instagram・公式サイトへの導線">
+			<section aria-label="Instagram・公式サイトへの導線" class="content-section">
 				<h2>最新情報・問い合わせ</h2>
 				<ul>
 					<li><a href="https://www.instagram.com/ryuikeion/">Instagram</a></li>
