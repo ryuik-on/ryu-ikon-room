@@ -382,11 +382,20 @@ const jsonLd = {
 			.photo-list li {
 				margin: 0;
 				width: 100%;
+				aspect-ratio: 4 / 5;
+				overflow: hidden;
 			}
 			.photo-list :global(img) {
 				display: block;
 				width: 100%;
-				height: auto;
+				height: 100%;
+				object-fit: cover;
+			}
+			.photo-list li:nth-child(1) :global(img) {
+				object-position: 50% 25%;
+			}
+			.photo-list li:nth-child(3) :global(img) {
+				object-position: 50% 65%;
 			}
 			/* 非対称配置はデスクトップのみ */
 			@media (min-width: 768px) {
