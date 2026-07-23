@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ryuik-on.github.io/ryu-ikon-room/sitemap.xml

@@ -24,10 +24,18 @@ const eventInfo = {
 
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(eventInfo.venue)}`;
 
+const siteUrl = "https://ryuik-on.github.io/ryu-ikon-room/";
+const siteTitle = `ROOM｜${eventInfo.organizer}`;
+const siteDescription =
+  "2026年11月22日（日）、那覇市ぶんかテンブス館 テンブスホールにて開催。琉球大学医学部軽音部（Ryuik-on）によるワンマンライブ「ROOM」。OPEN 16:00 / START 17:00。";
+const base = import.meta.env.BASE_URL;
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "MusicEvent",
   name: "ROOM",
+  url: siteUrl,
+  image: `${siteUrl}ogp.png`,
   startDate: "2026-11-22T17:00:00+09:00",
   endDate: "2026-11-22T20:00:00+09:00",
   doorTime: "2026-11-22T16:00:00+09:00",
@@ -36,10 +44,12 @@ const jsonLd = {
   location: {
     "@type": "Place",
     name: eventInfo.venue,
+    address: "沖縄県那覇市牧志3-2-10 てんぶす那覇4階",
   },
   organizer: {
     "@type": "Organization",
     name: eventInfo.organizer,
+    url: "https://ryuik-on.github.io/ryuik-on-official",
   },
 };
 ---
@@ -49,7 +59,23 @@ const jsonLd = {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="dark" />
-		<title>ROOM｜{eventInfo.organizer}</title>
+		<meta name="theme-color" content="#131313" />
+		<title>{siteTitle}</title>
+		<meta name="description" content={siteDescription} />
+		<link rel="canonical" href={siteUrl} />
+		<link rel="icon" href={`${base}favicon.ico`} sizes="48x48" />
+		<link rel="icon" href={`${base}favicon-192.png`} type="image/png" sizes="192x192" />
+		<link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={siteTitle} />
+		<meta property="og:title" content={siteTitle} />
+		<meta property="og:description" content={siteDescription} />
+		<meta property="og:url" content={siteUrl} />
+		<meta property="og:image" content={`${siteUrl}ogp.png`} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:locale" content="ja_JP" />
+		<meta name="twitter:card" content="summary_large_image" />
 		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	</head>
 	<body>
@@ -129,8 +155,11 @@ const jsonLd = {
 					<dd>後日公開</dd>
 					<dt>セットリスト</dt>
 					<dd>後日公開</dd>
-					<dt>会場</dt>
+					<dt>アクセス</dt>
 					<dd>
+						ゆいレール牧志駅から徒歩約5分<br />
+						国際通り沿い「てんぶす那覇」4階<br />
+						（有料駐車場81台あり）<br />
 						<a class="venue-link" href={mapUrl} target="_blank" rel="noopener">地図を見る（Google Maps）</a>
 					</dd>
 				</dl>
@@ -145,12 +174,26 @@ const jsonLd = {
 				<p class="ticket-note">teket（外部サイト）が開きます</p>
 			</section>
 
+			<section aria-label="注意事項" class="content-section faq">
+				<h2 class="section-title">注意事項</h2>
+				<ul>
+					<li>学生チケットをご利用の方は、当日学生証をご提示ください。</li>
+					<li>小人チケットは小学生以下（幼稚園児などの未就学児を含む）が対象です。</li>
+					<li>当日券は前売りの残数がある場合のみ販売します。</li>
+				</ul>
+			</section>
+
 			<section aria-label="Instagram・公式サイトへの導線" class="content-section links">
 				<h2 class="section-title">最新情報・問い合わせ</h2>
-				<ul>
-					<li><a href="https://www.instagram.com/ryuikeion/" target="_blank" rel="noopener">Instagram</a></li>
-					<li><a href="https://ryuik-on.github.io/ryuik-on-official" target="_blank" rel="noopener">公式サイト</a></li>
-					<li><span class="dim">問い合わせ先（準備中）</span></li>
+				<ul class="link-list">
+					<li>
+						<a href="https://www.instagram.com/ryuikeion/" target="_blank" rel="noopener">Instagram</a>
+						<span class="link-desc">最新情報の発信・お問い合わせはDMへ</span>
+					</li>
+					<li>
+						<a href="https://ryuik-on.github.io/ryuik-on-official" target="_blank" rel="noopener">公式サイト</a>
+						<span class="link-desc">琉球大学医学部を拠点に活動する軽音部、Ryuik-onについて</span>
+					</li>
 				</ul>
 			</section>
 		</main>
@@ -457,17 +500,31 @@ const jsonLd = {
 				color: var(--text-dim);
 			}
 
-			/* ---- リンク ---- */
-			.links ul {
+			/* ---- 注意事項 ---- */
+			.faq ul {
 				list-style: none;
 				margin: 0;
 				padding: 0;
-				display: flex;
-				flex-wrap: wrap;
-				gap: 12px 32px;
 			}
-			.dim {
+			.faq li {
+				padding: 12px 0;
+				border-bottom: 1px solid var(--line);
+				font-size: 0.92rem;
+			}
+
+			/* ---- リンク ---- */
+			.link-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: grid;
+				gap: 24px;
+			}
+			.link-desc {
+				display: block;
+				font-size: 0.82rem;
 				color: var(--text-dim);
+				margin-top: 2px;
 			}
 
 			/* ---- Footer ---- */
