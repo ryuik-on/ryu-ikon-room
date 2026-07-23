@@ -119,23 +119,8 @@ const jsonLd = {
 			<section aria-label="公演情報" class="content-section info">
 				<h2 class="section-title">公演情報</h2>
 				<dl>
-					<dt>公演名</dt>
-					<dd>ROOM</dd>
-					<dt>主催</dt>
-					<dd>{eventInfo.organizer}</dd>
-					<dt>日程</dt>
-					<dd><time datetime="2026-11-22">{eventInfo.date}</time></dd>
-					<dt>OPEN</dt>
-					<dd>{eventInfo.open}</dd>
-					<dt>START</dt>
-					<dd>{eventInfo.start}</dd>
 					<dt>終演目安</dt>
 					<dd>{eventInfo.endEstimate}</dd>
-					<dt>会場</dt>
-					<dd>
-						{eventInfo.venue}<br />
-						<a class="venue-link" href={mapUrl} target="_blank" rel="noopener">地図を見る（Google Maps）</a>
-					</dd>
 					<dt>料金</dt>
 					<dd>学生 1,000円 / 一般 1,500円 / 小人 500円</dd>
 					<dt>当日券</dt>
@@ -144,6 +129,10 @@ const jsonLd = {
 					<dd>後日公開</dd>
 					<dt>セットリスト</dt>
 					<dd>後日公開</dd>
+					<dt>会場</dt>
+					<dd>
+						<a class="venue-link" href={mapUrl} target="_blank" rel="noopener">地図を見る（Google Maps）</a>
+					</dd>
 				</dl>
 			</section>
 
