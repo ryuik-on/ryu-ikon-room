@@ -167,22 +167,22 @@ const jsonLd = {
 				</div>
 				<div class="process-grid">
 					<article class="process-card process-card-large reveal">
-						<div class="process-visual"><span>01</span><i></i></div>
-						<div>
+						<span class="process-num">01</span>
+						<div class="process-text">
 							<h3>合わせる。</h3>
 							<p>一人の演奏ではなく、一つの音になるまで。聴き、止まり、また始める。</p>
 						</div>
 					</article>
 					<article class="process-card reveal">
-						<div class="process-visual"><span>02</span><i></i></div>
-						<div>
+						<span class="process-num">02</span>
+						<div class="process-text">
 							<h3>聴き直す。</h3>
 							<p>演奏する側ではなく、客席に届く音として確かめる。</p>
 						</div>
 					</article>
 					<article class="process-card reveal">
-						<div class="process-visual"><span>03</span><i></i></div>
-						<div>
+						<span class="process-num">03</span>
+						<div class="process-text">
 							<h3>組み直す。</h3>
 							<p>曲だけでなく、順番、間、光まで。一夜の流れを設計する。</p>
 						</div>
@@ -225,7 +225,7 @@ const jsonLd = {
 			<section class="information section-pad" id="information" aria-labelledby="info-title">
 				<div class="section-heading reveal">
 					<div class="section-index">05 / INFORMATION</div>
-					<h2 id="info-title">その夜の情報。</h2>
+					<h2 id="info-title">開催情報。</h2>
 				</div>
 				<div class="info-board reveal">
 					<div class="date-block">
@@ -266,7 +266,7 @@ const jsonLd = {
 			<section class="tickets section-pad" id="tickets" aria-labelledby="ticket-title">
 				<div class="section-heading reveal">
 					<div class="section-index">06 / TICKET</div>
-					<h2 id="ticket-title">チケット。</h2>
+					<h2 id="ticket-title">TICKET</h2>
 				</div>
 				<div class="price-list reveal">
 					{prices.map((item) => (
@@ -765,10 +765,10 @@ const jsonLd = {
 				border: 1px solid var(--hairline);
 			}
 			.process-card {
-				display: grid;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
 				min-height: 390px;
-				grid-template-rows: 1fr auto;
-				gap: 64px;
 				background: var(--ink);
 				padding: 30px;
 			}
@@ -776,49 +776,11 @@ const jsonLd = {
 				grid-row: span 2;
 				min-height: 780px;
 			}
-			.process-visual {
-				position: relative;
-				overflow: hidden;
-				background: var(--soft-black);
-			}
-			.process-visual::after {
-				position: absolute;
-				top: 0;
-				left: 50%;
-				width: 1px;
-				height: 100%;
-				background: var(--hairline);
-				content: "";
-			}
-			.process-card-large .process-visual::before {
-				position: absolute;
-				top: 50%;
-				left: 0;
-				width: 100%;
-				height: 1px;
-				background: var(--hairline);
-				content: "";
-			}
-			.process-visual span {
-				position: absolute;
-				top: 18px;
-				left: 18px;
-				z-index: 1;
-				color: var(--ash);
-				font-size: 10px;
+			.process-num {
+				color: var(--vermilion);
+				font-size: 11px;
 				letter-spacing: 0.12em;
 				font-variant-numeric: tabular-nums;
-			}
-			.process-visual i {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				z-index: 1;
-				width: 6px;
-				height: 6px;
-				border-radius: 50%;
-				background: var(--vermilion);
-				transform: translate(-50%, -50%);
 			}
 			.process-card h3 {
 				margin: 0 0 14px;
@@ -936,25 +898,25 @@ const jsonLd = {
 				margin: 52px 0 0;
 			}
 
-			/* ---- INFORMATION ---- */
+			/* ---- INFORMATION（他セクションと同じ黒基調・白文字） ---- */
 			.information {
-				background: var(--warm-white);
-				color: var(--ink);
+				background: var(--ink);
+				color: var(--warm-white);
 			}
 			.information .section-index {
-				color: #6c6962;
+				color: var(--ash);
 			}
 			.info-board {
 				display: grid;
 				grid-template-columns: 5fr 7fr;
-				border-top: 1px solid #bdb9b1;
-				border-bottom: 1px solid #bdb9b1;
+				border-top: 1px solid var(--hairline);
+				border-bottom: 1px solid var(--hairline);
 			}
 			.date-block {
 				display: grid;
 				align-content: space-between;
 				min-height: 500px;
-				border-right: 1px solid #bdb9b1;
+				border-right: 1px solid var(--hairline);
 				padding: 30px 36px 30px 0;
 			}
 			.date-block span,
@@ -979,14 +941,14 @@ const jsonLd = {
 				min-height: 108px;
 				grid-template-columns: 1fr 2.5fr;
 				align-items: start;
-				border-bottom: 1px solid #bdb9b1;
+				border-bottom: 1px solid var(--hairline);
 				padding: 24px 0 18px 38px;
 			}
 			.info-board dl > div:last-child {
 				border-bottom: 0;
 			}
 			.info-board dt {
-				color: #6c6962;
+				color: var(--ash);
 				font-size: 10px;
 				letter-spacing: 0.16em;
 			}
@@ -998,7 +960,7 @@ const jsonLd = {
 			.info-board dd small {
 				display: block;
 				margin-top: 7px;
-				color: #6c6962;
+				color: var(--ash);
 				font-size: 13px;
 			}
 
@@ -1416,7 +1378,7 @@ const jsonLd = {
 				.date-block {
 					min-height: 280px;
 					border-right: 0;
-					border-bottom: 1px solid #bdb9b1;
+					border-bottom: 1px solid var(--hairline);
 					padding-right: 0;
 				}
 				.date-block strong {
