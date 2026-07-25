@@ -274,16 +274,8 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 					))}
 				</div>
 				<div class="ticket-action reveal">
-					<a
-						class="ticket-link ticket-cta is-pending"
-						href={ticketUrl}
-						target="_blank"
-						rel="noopener"
-						data-ticket-cta
-						data-sale-start={saleStartISO}
-						aria-disabled="true"
-					>
-						<span data-ticket-label>販売開始までお待ちください</span>
+					<a class="ticket-link ticket-cta" href={ticketUrl} target="_blank" rel="noopener">
+						<span>チケットを購入する</span>
 						<span aria-hidden="true">↗</span>
 					</a>
 					<p>
@@ -410,23 +402,6 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				updateReveals();
 				if (pendingReveals.size === 0) clearInterval(revealTimer);
 			}, 800);
-
-			// 販売開始日時の自動切り替え：teket URLは主催者確定済みのため常にhrefへ
-			// 埋め込んでいるが（JSON-LDのofferも同様）、8/22までは誤って踏めないよう
-			// aria-disabled化しクリックを無効化する。以降は通常のリンクとして機能する
-			document.querySelectorAll("[data-ticket-cta]").forEach((el) => {
-				if (!(el instanceof HTMLAnchorElement)) return;
-				const saleStart = el.dataset.saleStart;
-				const onSale = saleStart ? new Date() >= new Date(saleStart) : false;
-				if (onSale) {
-					el.classList.remove("is-pending");
-					el.removeAttribute("aria-disabled");
-					const label = el.querySelector("[data-ticket-label]");
-					if (label) label.textContent = "チケットを購入する";
-				} else {
-					el.addEventListener("click", (e) => e.preventDefault());
-				}
-			});
 		</script>
 
 		<style is:global>
@@ -566,18 +541,6 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 			.ticket-link.is-internal:hover > span:last-child {
 				transform: translateY(3px);
 			}
-			.ticket-link.is-pending {
-				opacity: 0.55;
-				cursor: not-allowed;
-			}
-			.ticket-link.is-pending:hover {
-				background: var(--warm-white);
-				color: var(--ink);
-			}
-			.ticket-link.is-pending:hover > span:last-child {
-				transform: none;
-			}
-
 			.site-header .header-ticket {
 				min-height: 38px;
 				padding-inline: 22px;
