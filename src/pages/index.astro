@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import heroPhoto from "../assets/hero/hero-photo.jpg";
+import heroLogo from "../assets/hero/ryuikon-logo.png";
 import photo01 from "../assets/photos/photo-01.jpg";
 import photo02 from "../assets/photos/photo-02.jpg";
 import photo03 from "../assets/photos/photo-03.jpg";
@@ -118,6 +119,12 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 	<body>
 		<a class="skip-link" href="#content">本文へ移動</a>
 
+		{/* Hero扉が開く前に一瞬挟むロゴ単体カット。装飾のみでコンテンツを持たないためaria-hidden。
+		    reduced-motion時はCSS側で即座に非表示にする */}
+		<div class="logo-intro" aria-hidden="true">
+			<Image src={heroLogo} alt="" widths={[160, 240]} sizes="18vw" loading="eager" fetchpriority="high" />
+		</div>
+
 		<header class="site-header" aria-label="メインナビゲーション">
 			<a class="brand" href="#top" aria-label="ROOM トップへ">ROOM</a>
 			<nav>
@@ -171,44 +178,16 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				<div class="statement-copy reveal">
 					<h2 id="about-title">見せたいのは、完成した音だけではない。</h2>
 					<p>
-						音を合わせては崩れ、また合わせる。その繰り返しの先に、一度きりの演奏があります。
+						音を合わせては崩れ、また合わせる。客席に届く音として聴き直し、曲順や間、光までも組み直す。
+						その繰り返しの先に、一度きりの演奏があります。
 						ROOMは、{eventInfo.organizer}が、一つの公演をつくり上げるライブです。
 					</p>
 				</div>
 			</section>
 
-			<section class="process section-pad" aria-labelledby="process-title">
-				<div class="section-heading reveal">
-					<div class="section-index" id="process-title">02 / PROCESS</div>
-				</div>
-				<div class="process-grid">
-					<article class="process-card process-card-large reveal">
-						<span class="process-num">01</span>
-						<div class="process-text">
-							<h3>合わせる。</h3>
-							<p>一人の演奏ではなく、一つの音になるまで。聴き、止まり、また始める。</p>
-						</div>
-					</article>
-					<article class="process-card reveal">
-						<span class="process-num">02</span>
-						<div class="process-text">
-							<h3>聴き直す。</h3>
-							<p>演奏する側の音ではなく、客席に届く音として確かめる。</p>
-						</div>
-					</article>
-					<article class="process-card reveal">
-						<span class="process-num">03</span>
-						<div class="process-text">
-							<h3>組み直す。</h3>
-							<p>曲だけでなく、順番、間、光まで。一夜の流れを設計する。</p>
-						</div>
-					</article>
-				</div>
-			</section>
-
 			<section class="scene section-pad" aria-labelledby="scene-title">
 				<div class="section-heading reveal">
-					<div class="section-index">03 / SCENE</div>
+					<div class="section-index">02 / SCENE</div>
 					<h2 id="scene-title">その場に、音がある。</h2>
 				</div>
 				<ul class="scene-grid">
@@ -228,9 +207,9 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 			</section>
 
 			<section class="invitation section-pad" aria-labelledby="founder-title">
-				<div class="invitation-rule reveal" aria-hidden="true"><span class="invitation-num">04</span></div>
+				<div class="invitation-rule reveal" aria-hidden="true"><span class="invitation-num">03</span></div>
 				<div class="invitation-copy reveal">
-					<div class="section-index">04 / FOUNDER'S NOTE</div>
+					<div class="section-index">03 / FOUNDER'S NOTE</div>
 					<h2 id="founder-title">だから、この夜をつくります。</h2>
 					<p>
 						鳴らした音を、届くべき人へ。<br />
@@ -241,7 +220,7 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 
 			<section class="information section-pad" id="information" aria-labelledby="info-title">
 				<div class="section-heading reveal">
-					<div class="section-index">05 / INFORMATION</div>
+					<div class="section-index">04 / INFORMATION</div>
 					<h2 id="info-title">INFORMATION</h2>
 				</div>
 				<div class="info-board reveal">
@@ -282,7 +261,7 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 
 			<section class="tickets section-pad" id="tickets" aria-labelledby="ticket-title">
 				<div class="section-heading reveal">
-					<div class="section-index">06 / TICKET</div>
+					<div class="section-index">05 / TICKET</div>
 					<h2 id="ticket-title">TICKET</h2>
 				</div>
 				<div class="price-list reveal">
@@ -330,7 +309,7 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 
 			<section class="venue section-pad" aria-labelledby="venue-title">
 				<div class="section-heading reveal">
-					<div class="section-index">07 / VENUE</div>
+					<div class="section-index">06 / VENUE</div>
 					<h2 id="venue-title">会場へ。</h2>
 				</div>
 				<div class="venue-grid reveal">
@@ -603,6 +582,32 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				padding-inline: 16px;
 			}
 
+			/* ---- Logo intro (Hero扉が開く前の一瞬のロゴ単体カット) ---- */
+			.logo-intro {
+				position: fixed;
+				inset: 0;
+				z-index: 60;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: var(--ink);
+				pointer-events: none;
+				animation: room-logo-intro 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+			}
+			.logo-intro img {
+				width: min(18vw, 120px);
+				height: auto;
+			}
+			@keyframes room-logo-intro {
+				0%,
+				55% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+
 			/* ---- Hero ---- */
 			.hero {
 				position: relative;
@@ -622,7 +627,8 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				min-width: 5px;
 				overflow: hidden;
 				background: var(--warm-white);
-				animation: room-aperture-open 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+				/* ロゴ単体カット（.logo-intro、0.6sからフェード開始）が引くのに合わせて開き始める */
+				animation: room-aperture-open 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
 			}
 			@keyframes room-aperture-open {
 				to {
@@ -787,53 +793,6 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 					top: 100px;
 					align-self: start;
 				}
-			}
-
-			/* ---- PROCESS ---- */
-			.process {
-				border-top: 1px solid var(--hairline);
-			}
-			.process-grid {
-				display: grid;
-				grid-template-columns: 1.4fr 1fr;
-				gap: 1px;
-				background: var(--hairline);
-				border: 1px solid var(--hairline);
-			}
-			.process-card {
-				display: flex;
-				flex-direction: column;
-				justify-content: space-between;
-				min-height: 390px;
-				background: var(--ink);
-				padding: 30px;
-			}
-			.process-card-large {
-				grid-row: span 2;
-				min-height: 780px;
-			}
-			.process-num {
-				color: var(--ash);
-				opacity: 0.55;
-				font-family: "Archivo Variable", sans-serif;
-				font-size: clamp(48px, 7vw, 110px);
-				font-stretch: 68%;
-				font-weight: 300;
-				letter-spacing: -0.01em;
-				line-height: 1;
-				font-variant-numeric: tabular-nums;
-			}
-			.process-card h3 {
-				margin: 0 0 14px;
-				font-size: 25px;
-				font-weight: 400;
-			}
-			.process-card p {
-				max-width: 480px;
-				margin: 0;
-				color: var(--ash);
-				font-size: 14px;
-				line-height: 1.85;
 			}
 
 			/* ---- A: SCENE（写真を罫線システムに組み込む） ---- */
@@ -1399,23 +1358,6 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				.section-heading {
 					display: block;
 					margin-bottom: 62px;
-				}
-
-				.process-grid {
-					display: block;
-					background: transparent;
-					border: 0;
-				}
-				/* モバイルでは空の黒箱にならないよう高さを詰める */
-				.process-card,
-				.process-card-large {
-					min-height: 240px;
-					margin-bottom: 1px;
-					border: 1px solid var(--hairline);
-					padding: 18px;
-				}
-				.process-card-large {
-					min-height: 280px;
 				}
 
 				.scene-grid {
