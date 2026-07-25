@@ -131,7 +131,7 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				<a href="#about">公演について</a>
 				<a href="#information">開催情報</a>
 				<a class="nav-instagram" href="https://www.instagram.com/ryuikeion/" target="_blank" rel="noopener">Instagram<span aria-hidden="true">↗</span></a>
-				<a class="ticket-link header-ticket is-internal" href="#tickets"><span>購入</span><span aria-hidden="true">↓</span></a>
+				<a class="ticket-link header-ticket" href={ticketUrl} target="_blank" rel="noopener"><span>購入</span><span aria-hidden="true">↗</span></a>
 			</nav>
 		</header>
 
@@ -165,7 +165,7 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 						<strong>{eventInfo.venueName}</strong>
 						<span>{eventInfo.venueHall}</span>
 					</div>
-					<a class="ticket-link is-internal" href="#tickets"><span>チケットを購入する</span><span aria-hidden="true">↓</span></a>
+					<a class="ticket-link" href={ticketUrl} target="_blank" rel="noopener"><span>チケットを購入する</span><span aria-hidden="true">↗</span></a>
 				</div>
 				<a class="scroll-cue" href="#about">
 					<span>SCROLL</span>
@@ -332,7 +332,7 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 						OPEN {eventInfo.open} / START {eventInfo.start}<br />
 						{venueFull}
 					</p>
-					<a class="ticket-link is-internal" href="#tickets"><span>チケットを購入する</span><span aria-hidden="true">↓</span></a>
+					<a class="ticket-link" href={ticketUrl} target="_blank" rel="noopener"><span>チケットを購入する</span><span aria-hidden="true">↗</span></a>
 				</div>
 			</section>
 		</main>
@@ -360,7 +360,7 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				<strong>11.22 SUN</strong>
 				<span>一般 ¥1,500</span>
 			</div>
-			<a class="ticket-link is-internal" href="#tickets"><span>購入する</span><span aria-hidden="true">↓</span></a>
+			<a class="ticket-link" href={ticketUrl} target="_blank" rel="noopener"><span>購入する</span><span aria-hidden="true">↗</span></a>
 		</div>
 
 		<script>
@@ -536,10 +536,6 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 			}
 			.ticket-link:hover > span:last-child {
 				transform: translate(3px, -3px);
-			}
-			/* ページ内ジャンプのボタンは「↓」なので、hover時も下方向に動かす */
-			.ticket-link.is-internal:hover > span:last-child {
-				transform: translateY(3px);
 			}
 			.site-header .header-ticket {
 				min-height: 38px;
