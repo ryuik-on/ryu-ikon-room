@@ -178,8 +178,8 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				<div class="statement-copy reveal">
 					<h2 id="about-title">見せたいのは、<br />完成した音だけではない。</h2>
 					<p>
-						音を合わせては崩れ、また合わせる。客席に届く音として聴き直し、曲順や間、光までも組み直す。
-						その繰り返しの先に、一度きりの演奏があります。
+						音を合わせては崩れ、また合わせ、聴き直し、組み直す。
+						その先に、一度きりの演奏があります。
 						ROOMは、{eventInfo.organizer}が、一つの公演をつくり上げるライブです。
 					</p>
 				</div>
@@ -198,7 +198,6 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 						</li>
 					))}
 				</ul>
-				<p class="scene-caption reveal">写真はいずれも過去公演の記録より</p>
 				<p class="scene-copy reveal">
 					音を鳴らしている姿。<br />
 					その姿から伝わる熱は、<br />
@@ -772,7 +771,7 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 			}
 			.scene-grid {
 				list-style: none;
-				margin: 0 0 18px;
+				margin: 0 0 88px;
 				padding: 0;
 				display: grid;
 				grid-template-columns: repeat(3, 1fr);
@@ -802,12 +801,6 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
-			}
-			.scene-caption {
-				margin: 0 0 88px;
-				color: var(--ash);
-				font-size: 12px;
-				letter-spacing: 0.08em;
 			}
 			.scene-copy {
 				max-width: 640px;
