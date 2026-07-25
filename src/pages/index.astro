@@ -1365,6 +1365,11 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				.info-board dl > div:nth-child(even) {
 					padding-left: 16px;
 				}
+				/* OPEN/STARTの行の下線は引かず、縦線だけで区切る（終演目安/HOSTとの間はVENUE前の区切りとして残す） */
+				.info-board dl > div:nth-child(1),
+				.info-board dl > div:nth-child(2) {
+					border-bottom: 0;
+				}
 				.info-board dl > div:nth-child(5) {
 					grid-column: 1 / -1;
 					border-right: 0;
@@ -1375,12 +1380,12 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				}
 
 				.price-row {
-					min-height: 112px;
+					min-height: 96px;
 					grid-template-columns: 1fr auto;
 					gap: 10px;
 				}
 				.price-row strong {
-					font-size: 42px;
+					font-size: 28px;
 				}
 				.price-row small {
 					grid-column: 1 / -1;
