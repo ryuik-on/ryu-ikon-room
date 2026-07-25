@@ -207,9 +207,8 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 			</section>
 
 			<section class="invitation section-pad" aria-labelledby="founder-title">
-				<div class="invitation-rule reveal" aria-hidden="true"><span class="invitation-num">03</span></div>
+				<div class="section-index reveal">03 / FOUNDER'S NOTE</div>
 				<div class="invitation-copy reveal">
-					<div class="section-index">03 / FOUNDER'S NOTE</div>
 					<h2 id="founder-title">だから、この夜をつくります。</h2>
 					<p>
 						鳴らした音を、届くべき人へ。<br />
@@ -759,7 +758,8 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 			/* C: セクション番号をデスクトップでsticky化 */
 			@media (min-width: 900px) {
 				.statement > .section-index,
-				.section-heading > .section-index {
+				.section-heading > .section-index,
+				.invitation > .section-index {
 					position: sticky;
 					top: 100px;
 					align-self: start;
@@ -830,41 +830,15 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				}
 			}
 
-			/* ---- FOUNDER'S NOTE ---- */
+			/* ---- FOUNDER'S NOTE（01/02と同じ「小さい番号ラベル＋見出し」の構成に統一） ---- */
 			.invitation {
 				display: grid;
-				min-height: 88svh;
-				grid-template-columns: 1fr 1fr;
-				align-items: center;
-			}
-			.invitation-rule {
-				position: relative;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				height: 56vh;
-				max-height: 640px;
-				border-left: 1px solid var(--hairline);
-			}
-			.invitation-num {
-				color: var(--ash);
-				opacity: 0.55;
-				font-family: "Archivo Variable", sans-serif;
-				font-size: clamp(64px, 9vw, 160px);
-				font-stretch: 68%;
-				font-weight: 300;
-				letter-spacing: -0.01em;
-				line-height: 1;
-				font-variant-numeric: tabular-nums;
+				min-height: 60svh;
+				grid-template-columns: 3fr 9fr;
+				align-items: start;
 			}
 			.invitation-copy {
-				padding-left: 8vw;
-			}
-			.invitation-copy .section-index {
-				margin-bottom: 42px;
-			}
-			.invitation h2 {
-				font-size: clamp(38px, 4.5vw, 68px);
+				max-width: 1000px;
 			}
 			.invitation p {
 				margin: 52px 0 0;
@@ -1310,7 +1284,8 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 					min-height: auto;
 				}
 				.statement .section-index,
-				.section-heading .section-index {
+				.section-heading .section-index,
+				.invitation .section-index {
 					margin-bottom: 42px;
 					position: static;
 				}
@@ -1354,10 +1329,6 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				.invitation {
 					display: block;
 					min-height: auto;
-				}
-				/* モバイルではゴースト数字＋縦線の帯は空走になるだけなので出さない */
-				.invitation-rule {
-					display: none;
 				}
 				.invitation-copy {
 					padding: 0;
