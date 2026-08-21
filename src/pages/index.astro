@@ -31,8 +31,8 @@ const prices = [
 ];
 
 // teket URLは主催者が確定済みと明言（facts-and-content.md参照）。
-// 販売開始（8/22）前はteket側ページが非公開のため、リンク自体は常に
-// 埋め込みつつ、JSで aria-disabled + クリック無効化して誤って踏めないようにする。
+// 2026-07-25、主催者の指示で常時クリック可能な通常リンクに変更済み
+// （旧: 8/22までaria-disabled+クリック無効化していたが撤去した）。
 const ticketUrl = "https://teket.jp/19130/74082";
 const saleStartISO = "2026-08-22T00:00:00+09:00";
 const saleStartLabel = "2026年8月22日（土）";
