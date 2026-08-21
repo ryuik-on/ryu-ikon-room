@@ -271,14 +271,17 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 						</div>
 					))}
 				</div>
-				<p class="merch-note reveal">物販：タオルもご購入いただけます（+¥1,200）。teketでのチケット購入時に追加できます。</p>
+				<p class="merch-note reveal">
+					<strong>物販：タオルもご購入いただけます（+¥1,200）</strong>
+					<span>teketでのチケット購入時に追加できます。</span>
+				</p>
 				<div class="ticket-action reveal">
 					<a class="ticket-link ticket-cta" href={ticketUrl} target="_blank" rel="noopener">
 						<span>チケットを購入する</span>
 						<span aria-hidden="true">↗</span>
 					</a>
 					<p>
-						前売券は{saleStartLabel}販売開始。teket（外部サイト）での販売です。<br />
+						前売券は{saleStartLabel}より販売中です。teket（外部サイト）での販売です。<br />
 						当日券は前売りの残数がある場合のみ販売します。
 					</p>
 				</div>
@@ -934,10 +937,23 @@ const fontFaceCss = `@font-face{font-family:"Archivo Variable";src:url("${base}f
 				font-size: 12px;
 			}
 			.merch-note {
-				margin: 28px 0 0;
+				display: block;
+				margin: 32px 0 0;
+				border: 1px solid var(--hairline);
+				padding: 20px 22px;
+				line-height: 1.8;
+			}
+			.merch-note strong {
+				display: block;
+				margin-bottom: 6px;
+				color: var(--warm-white);
+				font-size: 16px;
+				font-weight: 600;
+			}
+			.merch-note span {
+				display: block;
 				color: var(--ash);
 				font-size: 13px;
-				line-height: 1.8;
 			}
 
 			.ticket-action {
