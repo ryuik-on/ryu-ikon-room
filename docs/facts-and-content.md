@@ -138,7 +138,7 @@ Description / OGP description:
 | 公開切り替え時期の目安 | 2026年8月22日（チケット販売開始）の直前を想定 |
 | Founder’s Noteの構成方針 | コンセプト原文とは別枠でFounder’s Noteを掲載する案を承認（最終文章は未確定） |
 | GitHub Pagesの配信設定 | `main`ブランチ / `(root)`、「Deploy from a branch」方式（2026-07-23、GitHub Settings画面のスクリーンショットで確認） |
-| 素材の所在 | 写真・OGP・チラシ候補一式は主催者ローカルの`~/Documents/claude_room/`フォルダにある（生写真12点、OGP/フライヤーのデザイン案多数、teket QRコード画像を含む） |
+| 素材の所在 | 写真・OGP・チラシ候補一式（生写真12点、OGP/フライヤーのデザイン案多数、teket QRコード画像を含む）。2026-08-31、`~/Documents/claude_room/`からリポジトリ直下の`materials/`へ移動済み（Gitには追跡させない、`.gitignore`で除外） |
 | OGP画像の最終版 | `ROOM_OGP_huddle_9599_FINAL.png`（ロゴ左上、OPEN 16:00 / START 17:00表記あり）を採用 |
 
 ## 2026-07-24: GPT版デザイン折衷後の掲載コピー

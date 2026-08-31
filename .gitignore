@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# raw materials (photos, design iteration files) — not for git, kept local only
+/materials/
