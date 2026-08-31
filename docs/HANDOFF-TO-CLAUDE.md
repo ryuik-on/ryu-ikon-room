@@ -1,182 +1,90 @@
-# Handoff to Claude — ROOM v2 preparation
+# Handoff to Claude — ROOM v2 現状引き継ぎ
 
-作成日: 2026-07-23
+作成日: 2026-07-23（初版） / 更新日: 2026-08-31
 
-## 今回Codexが行った作業
+**この文書は「これから作る」時点の内容ではありません。v2は実装済み・本番公開済みです。** 初版の内容（Phase 1着手前の調査記録）は末尾の「初版の記録（歴史的参考）」に残します。まずは以下の現状セクションを読んでください。
 
-- remote、branch、tag、working tree、公開URL、Pages関連ファイル、Actions、旧サイト構成を調査
-- ライブサイトをデスクトップ相当1280pxとモバイル390pxで確認
-- 外部チケット導線と404表示を確認
-- `main`のHEADをローカルタグ`room-v1-archive`で保全
-- `main`からローカルbranch`rebuild/room-v2`を作成
-- v1の静的サイトを`archive/room-v1/`へ退避
-- 事実、監査、情報構造、方向性、受け入れ条件、工程、未確定事項を文書化
-- `CLAUDE.md`の下書きと本handoffを作成
+## 現状ひとことまとめ
 
-新サイトのデザイン、本実装、フレームワーク導入、依存関係更新は行っていません。
+ROOM公式サイトはAstroで実装済み、GitHub Pagesで本番公開中です。チケット販売は開始済み。残る作業は「ライブ接近に伴うコンテンツ追加」フェーズで、実装の土台は変わりません。
 
-## 現在のbranch
+- 本番URL: <https://ryuik-on.github.io/ryu-ikon-room/>
+- teketチケットURL: <https://teket.jp/19130/74082>（2026年8月22日に販売開始済み）
+- 公演日: 2026年11月22日（日）那覇市ぶんかテンブス館 テンブスホール
 
-`rebuild/room-v2`
+## ブランチ構成
 
-起点は`main`の`2b825ba377d566730f70e664e940d0a50ad9da66`です。`main`自体には変更を加えていません。
+- `rebuild/room-v2` — Astroソース。**開発・編集は常にこのブランチで行う**
+- `main` — ビルド済み静的出力のみ。GitHub Pagesの配信元（Deploy from a branch: main/root）。直接編集しない
+- `archive/room-v1/`（`rebuild/room-v2`ブランチ内） — 旧サイトの退避先
+- `room-v1-archive`タグ — 旧サイト公開時点の保全
 
-## 旧サイトの保存状態
+デプロイ手順（`rebuild/room-v2`でビルド→`main`へrsync同期→push→GitHub Pagesビルド確認）の詳細と既知の落とし穴は、このセッションのプロジェクトメモリ`project-room-deploy-procedure`を参照してください（このリポジトリの外、Claude Codeのメモリシステムに保存済み）。要点だけ書くと:
 
-- 公開時点のcommit: `2b825ba377d566730f70e664e940d0a50ad9da66`
-- 保存タグ: `room-v1-archive`（local/remote双方）
-- branch内退避: `archive/room-v1/`
-- `.git`、README、公開設定は移動していない
-- リポジトリ内にActions/Pages設定ファイルは元から存在しない
+1. `rebuild/room-v2`で`npm run build`
+2. `dist/`を退避
+3. `git checkout main`、退避先から`rsync -a --delete --exclude='.git' --exclude='README.md' --exclude='node_modules' --exclude='.astro'`で同期
+4. commit・push
+5. `gh api repos/ryuik-on/ryu-ikon-room/pages/builds/latest --jq '.status'`で`built`を確認（`building`で詰まったり`errored`になったら空コミットでリトライすると直ることが多い）
+6. `rebuild/room-v2`に戻り`npm install`
 
-復元・確認方法は`archive/room-v1/README.md`を参照してください。
+## 技術構成（確定済み）
 
-## タグとbranchの状態
+- Astro（静的サイト、フレームワーク依存最小）
+- 単一ページ: `src/pages/index.astro`（マークアップ・データ・インラインCSS・JSをすべて含む）
+- 画像は`astro:assets`の`<Image>`（`widths`/`sizes`/`loading`/`decoding`指定）
+- フォント: 欧文はArchivo（可変フォント、SIL OFL、`public/fonts/`にセルフホスト）。日本語はシステムフォント
+- JSON-LD `MusicEvent`構造化データ実装済み
+- `public/.nojekyll`必須（GitHub PagesのデフォルトJekyll処理が`_astro/`を消す不具合の対策）
 
-- remote branch: `origin/main`、`origin/rebuild/room-v2`
-- local branch: `main`、`rebuild/room-v2`
-- remote tag: `room-v1-archive`
-- local tag: `room-v1-archive`
-- push: 保存タグと再構築ブランチをバックアップ済み
+## 確定済みコンテンツ・運用ルール
 
-## 変更ファイル
+`docs/facts-and-content.md`が確定情報の正本です。要約・改変せずそのまま参照してください。特に以下は決定済みで、蒸し返さないこと:
 
-### 退避
+- コンセプト文・Founder's Note最終稿（2026-07-23改訂版）
+- チケットCTAは常時クリック可能なリンク（`aria-disabled`等での事前抑止はしない、2026-07-25確定）
+- 物販: タオル追加+¥1,200（2026-07-26確定、teket側で対応済み、サイトはTICKET欄に注記）
+- 前売り文言は「より販売中です」（8/22の販売開始後を前提とした文言、2026-08-31修正）
+- セットリスト（全曲目・演奏時間、6ブロック、総尺95分）は2026-08-31確定済み。**ただしサイトへの掲載はまだ未着手**。掲載粒度（ブロック名のみか曲目まで公開するか）は主催者に未確認 — `docs/open-questions.md`参照
 
-- `archive/room-v1/index.html`
-- `archive/room-v1/style.css`
-- `archive/room-v1/script.js`
-- `archive/room-v1/assets/*`
-- `archive/room-v1/README.md`
+## 素材の場所
 
-### 設計・監査
+生写真・OGP案・フライヤー案などは`~/Projects/ryu-ikon-room/materials/`にある（2026-08-31、`~/Documents/claude_room/`から移動、`.gitignore`で除外・Git非追跡）。サイトで実際に使っている画像は`src/assets/photos/`。
 
-- `docs/current-site-audit.md`
-- `docs/facts-and-content.md`
-- `docs/content-architecture.md`
-- `docs/visual-direction.md`
-- `docs/acceptance-criteria.md`
-- `docs/rebuild-plan.md`
-- `docs/open-questions.md`
-- `docs/screenshots/.gitkeep`
-- `docs/HANDOFF-TO-CLAUDE.md`
+## 次にやること（優先順、詳細はプロジェクトメモリ`project-room-site-roadmap`参照）
 
-### プロジェクト文書
-
-- `CLAUDE.md`
-- `README.md`
-- `RESULTS.md`
-
-## リポジトリの技術構成
-
-v1は依存関係なしの静的HTML/CSS/JavaScriptです。Canvas、IntersectionObserver、requestAnimationFrame、CSS変数で長いスクロール演出を実装し、Google Fontsを読み込みます。build、lint、package.json、CIはありません。
-
-v2の技術は未決定です。Astroは候補ですが確定ではありません。
-
-## 重要な確定情報
-
-- 公演名: ROOM
-- 主催: Ryuik-on / 琉球大学医学部軽音楽部
-- 日程: 2026年11月22日（日）
-- OPEN: 16:00
-- START: 17:00
-- 会場: 那覇市ぶんかテンブス館 テンブスホール
-- 料金: 学生1,000円 / 一般1,500円
-- Instagram: <https://www.instagram.com/ryuikeion/>
-- ROOMサイト: <https://ryuik-on.github.io/ryu-ikon-room/>
-- コンセプト原文: `docs/facts-and-content.md`参照（要約禁止）
-
-## 未確定情報・検出した問題
-
-- v1のteket URLは2026-07-23時点でイベントページ表示エラー
-- 有効なチケットURL、販売期間、当日券方針
-- 小人料金の有無
-- v1にある「終演目安20:00頃」とJSON-LDの20:00固定値
-- Founder’s Note最終稿とコンセプト原文との役割分担
-- 公式サイトURL
-- Heroの静止画/動画、採用素材、横長広告画像
-- 素材の撮影者、権利、クレジット、被写体許諾
-- ROOM専用ロゴ、フォント、解析、公開切替時期
-- GitHub Pages設定の正確なsource branch/folder
-- 390pxで23pxの既存横オーバーフロー
+1. セットリストのサイト掲載（内容は確定済み、掲載粒度の主催者確認待ち）
+2. 当日の来場案内（整理券有無、開場〜開演の流れ、物販受け取り方法）
+3. 出演バンド紹介
+4. 完売・残席状況の告知動線
 
 ## Claudeが最初に読むファイル
 
-1. `docs/facts-and-content.md`
-2. `docs/open-questions.md`
-3. `docs/current-site-audit.md`
-4. `docs/content-architecture.md`
-5. `docs/visual-direction.md`
-6. `docs/acceptance-criteria.md`
-7. `docs/rebuild-plan.md`
-8. `CLAUDE.md`
+1. `docs/facts-and-content.md`（確定情報の正本）
+2. `docs/open-questions.md`（未確定事項の一覧）
+3. `README.md`（ビルド・公開の運用手順）
+4. `CLAUDE.md`
 
-## Claudeが最初に行うべき調査
+## 引き続き守ること
 
-1. `facts-and-content.md`の確定/未確定区分を人間と確認する
-2. 特にチケットURL、終演時刻、当日券、小人料金、Founder’s Note、公式サイトURLを解決する
-3. 素材の内容・権利・クレジット・採否を確認する
-4. GitHub Pages設定画面でsource branch/folderと公開運用を確認する
-5. v2技術候補を、GitHub Pages base path・保守性・依存関係・運用コストで比較する
-6. 技術導入前にPhase 1の完了条件と受け入れ条件を確定する
+- `main`ブランチを直接編集しない（`rebuild/room-v2`でビルドしたものをrsyncで同期する以外の変更を加えない）
+- コンテンツ（コピー、料金、日程等）の変更は主催者確認済みの`docs/facts-and-content.md`と矛盾しないか必ず照合する
+- push・本番デプロイ・公開情報の変更は、実施前に人間に確認する
+- 推測で情報を埋めない。未確認事項は`docs/open-questions.md`に残す
 
-## Claudeがまだ行ってはいけないこと
+---
 
-- 完成デザイン、Heroデザイン、本実装
-- Astro/React/Next.js等の導入、`npm install`、依存関係更新
-- v1コードの流用・改善
-- 素材の生成・削除・圧縮
-- 未確認情報や推測URLの追加
-- mainへのmerge、Pages切替、本番deploy
-- remote push（人間承認まで）
-- タグ上書き、force push、履歴改変
+## 初版の記録（歴史的参考、2026-07-23時点）
 
-## 推奨する次のプロンプト
+以下はPhase 1着手前、Codexによる初回調査時点の記録です。現状とは大きく異なるため実行の参考にはしないでください（技術選定やブランチ起点などの経緯を確認したい場合のみ参照）。
 
-```text
-ROOM v2のPhase 1（コンセプトと要件の確定）だけを計画してください。
+### 当時の状態
 
-最初に次を順番に読んでください。
-- docs/facts-and-content.md
-- docs/open-questions.md
-- docs/current-site-audit.md
-- docs/content-architecture.md
-- docs/visual-direction.md
-- docs/acceptance-criteria.md
-- docs/rebuild-plan.md
-- CLAUDE.md
+- `rebuild/room-v2`の起点は`main`の`2b825ba377d566730f70e664e940d0a50ad9da66`
+- v1は依存関係なしの静的HTML/CSS/JavaScript
+- v2の技術は未決定（Astroは候補の一つに過ぎなかった）
+- チケットURL、終演時刻、当日券、小人料金、公式サイトURル等すべて未確定
 
-確定事実・v1から抽出した文章・未確定事項・提案を混同しないでください。
-特に、壊れているteket URLの代替、小人料金、終演時刻、当日券、公式サイトURLを推測しないでください。
+### 当時「まだ行ってはいけない」とされていたこと（すべて現在は完了済み）
 
-今回は実装、デザイン作成、依存関係導入、素材変更、pushを行わず、以下だけを提示してください。
-1. Phase 1で人間が回答すべき質問（優先順）
-2. 各回答が後続Phaseへ与える影響
-3. 技術選定へ進む前の完了条件
-4. 更新が必要になるdocsファイルと変更計画
-```
-
-## 実行すべき確認コマンド
-
-```sh
-git status --short --branch
-git branch -a -vv
-git tag -n
-git rev-parse main
-git rev-list -n 1 room-v1-archive
-git log --oneline --decorate -5
-git diff main...rebuild/room-v2 --stat
-git ls-tree -r --name-only room-v1-archive
-find archive/room-v1 -type f -not -name README.md -print | sort
-find docs -maxdepth 2 -type f -print | sort
-```
-
-v2のbuild/lintコマンドは未定義です。存在しないコマンドを実行前提にしないでください。
-
-## remote同期状態
-
-- `room-v1-archive`タグ: `origin`へpush済み
-- `rebuild/room-v2`branch: `origin`へpush済み
-- `main`: 変更なし（`2b825ba`）
-
-今後の追加push、merge、公開切替についても、まず人間が差分を確認し、明示承認してから行ってください。
+完成デザイン・本実装・Astro導入・npm install・v2としてのmainへのmerge・Pages切替・本番deploy — これらはすべてその後の作業で完了し、現在は本番公開中です。この節は「かつて慎重さを求められていた」経緯の記録として残すのみで、現状のガードレールではありません。
